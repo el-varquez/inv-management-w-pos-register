@@ -1,0 +1,6 @@
+{
+  "src/POS.Register/POS.Register.csproj": {
+    "projects": [],
+    "packages": ["CommunityToolkit.Mvvm"]
+  }
+}
