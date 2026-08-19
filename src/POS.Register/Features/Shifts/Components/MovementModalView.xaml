@@ -1,0 +1,69 @@
+<UserControl x:Class="POS.Register.Features.Shifts.Components.MovementModalView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:lib="clr-namespace:POS.Register.Lib">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        <lib:InverseBoolToVisibilityConverter x:Key="InverseBoolToVis" />
+    </UserControl.Resources>
+    <Border Style="{StaticResource ModalCard}" Width="480" Padding="26">
+        <StackPanel>
+            <TextBlock Style="{StaticResource TitleSection}" FontSize="22" FontWeight="Bold" Text="Cash in or out of the drawer" Margin="0,0,0,6" />
+            <TextBlock Style="{StaticResource BodyText}" FontSize="13" Foreground="{StaticResource Ink2}" TextWrapping="Wrap"
+                       Text="Paying a delivery from the till, or adding change. Every movement shows on the X and Z read by name." Margin="0,0,0,14" />
+            <Grid Margin="0,0,0,14">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="10" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid>
+                    <Button Style="{StaticResource BtnDanger}" Content="PAYOUT — CASH LEAVES" MinHeight="52" FontSize="13"
+                            Command="{Binding SetPayoutCommand}"
+                            Visibility="{Binding IsPayout, Converter={StaticResource BoolToVis}}" />
+                    <Button Style="{StaticResource BtnGhost}" Content="PAYOUT — CASH LEAVES" MinHeight="52" FontSize="13"
+                            Foreground="{StaticResource Ink2}" Command="{Binding SetPayoutCommand}"
+                            Visibility="{Binding IsPayout, Converter={StaticResource InverseBoolToVis}}" />
+                </Grid>
+                <Grid Grid.Column="2">
+                    <Button Style="{StaticResource BtnPrimary}" Content="PAY-IN — CASH ENTERS" MinHeight="52" FontSize="13"
+                            Command="{Binding SetPayInCommand}"
+                            Visibility="{Binding IsPayout, Converter={StaticResource InverseBoolToVis}}" />
+                    <Button Style="{StaticResource BtnGhost}" Content="PAY-IN — CASH ENTERS" MinHeight="52" FontSize="13"
+                            Foreground="{StaticResource Ink2}" Command="{Binding SetPayInCommand}"
+                            Visibility="{Binding IsPayout, Converter={StaticResource BoolToVis}}" />
+                </Grid>
+            </Grid>
+            <Border BorderBrush="{StaticResource LineStrong}" BorderThickness="1"
+                    CornerRadius="{StaticResource RadiusControl}" Padding="18,10" Margin="0,0,0,14">
+                <DockPanel>
+                    <TextBlock Style="{StaticResource MoneyModal}" FontSize="28" Text="₱" VerticalAlignment="Center" />
+                    <TextBlock DockPanel.Dock="Right" Style="{StaticResource MoneyModal}" FontSize="28"
+                               Text="{Binding AmountDisplay}" HorizontalAlignment="Right" />
+                    <Grid />
+                </DockPanel>
+            </Border>
+            <TextBlock Style="{StaticResource Caption}" Text="WHAT WAS IT FOR? (REQUIRED)" Margin="0,0,0,7" />
+            <TextBox Style="{StaticResource InputText}" MinHeight="48" Text="{Binding NoteDisplay, Mode=OneWay}" Margin="0,0,0,14" />
+            <Border Background="{StaticResource Surface2}" CornerRadius="{StaticResource RadiusControl}" Padding="18,13" Margin="0,0,0,14">
+                <DockPanel>
+                    <TextBlock Style="{StaticResource Caption}" FontSize="13" FontWeight="Bold"
+                               Foreground="{StaticResource Ink2}" Text="EXPECTED CASH AFTER" VerticalAlignment="Center" />
+                    <TextBlock DockPanel.Dock="Right" Style="{StaticResource MoneyModal}" FontSize="24"
+                               Text="{Binding ExpectedAfterDisplay}" HorizontalAlignment="Right" />
+                </DockPanel>
+            </Border>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="10" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Button Style="{StaticResource BtnGhost}" Content="Cancel" MinHeight="54" Padding="20,0"
+                        Command="{Binding CancelCommand}" />
+                <Button Grid.Column="2" Style="{StaticResource BtnPrimary}" Content="RECORD" MinHeight="54"
+                        Command="{Binding ConfirmCommand}" />
+            </Grid>
+        </StackPanel>
+    </Border>
+</UserControl>
