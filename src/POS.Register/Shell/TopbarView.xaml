@@ -5,7 +5,7 @@
     <Border Background="{StaticResource Surface}" BorderBrush="{StaticResource Line}" BorderThickness="0,0,0,1" Padding="22,0">
         <DockPanel Height="64">
             <TextBlock DockPanel.Dock="Left" Style="{StaticResource TitleSection}" FontSize="22" FontWeight="Bold"
-                       Text="{Binding StoreName}" VerticalAlignment="Center" Margin="0,0,16,0" />
+                       Text="{Binding Settings.StoreName}" VerticalAlignment="Center" Margin="0,0,16,0" />
             <Border DockPanel.Dock="Left" VerticalAlignment="Center" CornerRadius="14" Padding="12,5" BorderThickness="1">
                 <Border.Style>
                     <Style TargetType="Border">
@@ -44,7 +44,7 @@
                        Foreground="{StaticResource Ink3}" Text="{Binding DateShort}"
                        VerticalAlignment="Center" Margin="0,0,14,0" />
             <TextBlock DockPanel.Dock="Right" Style="{StaticResource BodyText}" FontWeight="SemiBold"
-                       Foreground="{StaticResource Ink2}" Text="{Binding CashierName}"
+                       Foreground="{StaticResource Ink2}" Text="{Binding Session.Name}"
                        VerticalAlignment="Center" Margin="0,0,14,0" />
             <Grid />
         </DockPanel>
