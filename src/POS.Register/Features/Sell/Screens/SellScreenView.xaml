@@ -1,0 +1,295 @@
+<UserControl x:Class="POS.Register.Features.Sell.Screens.SellScreenView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:lib="clr-namespace:POS.Register.Lib">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        <lib:InverseBoolToVisibilityConverter x:Key="InverseBoolToVis" />
+    </UserControl.Resources>
+    <Grid>
+        <Grid Margin="16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="16" />
+                <ColumnDefinition Width="430" />
+            </Grid.ColumnDefinitions>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid Panel.ZIndex="20">
+                    <TextBox x:Name="ScanBox" Style="{StaticResource InputText}" FontSize="18" MinHeight="58"
+                             Text="{Binding ScanText, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBlock Style="{StaticResource BodyText}" FontSize="18" Foreground="{StaticResource Ink3}"
+                               Text="Scan barcode, or type item code / barcode / name…" Margin="18,0"
+                               VerticalAlignment="Center" IsHitTestVisible="False"
+                               Visibility="{Binding ShowResults, Converter={StaticResource InverseBoolToVis}}" />
+                    <Border Style="{StaticResource Card}" Padding="0" VerticalAlignment="Top" Margin="0,62,0,0"
+                            BorderBrush="{StaticResource LineStrong}" Effect="{StaticResource ShadowLg}"
+                            Visibility="{Binding ShowResults, Converter={StaticResource BoolToVis}}">
+                        <ListBox ItemsSource="{Binding Results}"
+                                 SelectedIndex="{Binding ResultIndex, Mode=TwoWay}"
+                                 Background="Transparent" BorderThickness="0"
+                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                 KeyboardNavigation.DirectionalNavigation="None"
+                                 HorizontalContentAlignment="Stretch">
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="ListBoxItem">
+                                    <Setter Property="Padding" Value="0" />
+                                    <Setter Property="Focusable" Value="False" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="ListBoxItem">
+                                                <Border x:Name="Row" Background="Transparent" BorderThickness="3,0,0,1"
+                                                        BorderBrush="{StaticResource Canvas}">
+                                                    <ContentPresenter />
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsSelected" Value="True">
+                                                        <Setter TargetName="Row" Property="Background" Value="{StaticResource Canvas}" />
+                                                        <Setter TargetName="Row" Property="BorderBrush" Value="{StaticResource Green}" />
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Padding="13,11">
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding OutOfStock}" Value="True">
+                                                        <Setter Property="Opacity" Value="0.45" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="70" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="130" />
+                                                <ColumnDefinition Width="90" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Style="{StaticResource BodyText}" FontWeight="Bold"
+                                                       Foreground="{StaticResource Ink2}" Text="{Binding Code}" VerticalAlignment="Center" />
+                                            <TextBlock Grid.Column="1" VerticalAlignment="Center">
+                                                <Run Text="{Binding Name, Mode=OneWay}" FontWeight="SemiBold" /><Run Text="  " /><Run Text="{Binding Barcode, Mode=OneWay}" FontSize="12" Foreground="{StaticResource Ink3}" />
+                                            </TextBlock>
+                                            <TextBlock Grid.Column="2" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock" BasedOn="{StaticResource BodyText}">
+                                                        <Setter Property="FontSize" Value="12" />
+                                                        <Setter Property="FontWeight" Value="SemiBold" />
+                                                        <Setter Property="Foreground" Value="{StaticResource Ink3}" />
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding OutOfStock}" Value="True">
+                                                                <Setter Property="Foreground" Value="{StaticResource Red}" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                                <TextBlock.Text>
+                                                    <Binding Path="StockCaption" />
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                            <TextBlock Grid.Column="3" Style="{StaticResource TitleSection}" FontSize="15"
+                                                       Text="{Binding Price, StringFormat=₱{0:N2}}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ListBox>
+                    </Border>
+                </Grid>
+                <Border Grid.Row="1" Style="{StaticResource Card}" Padding="0" Margin="0,12,0,0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Border BorderBrush="{StaticResource Line}" BorderThickness="0,0,0,1" Padding="18,12">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="150" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="160" />
+                                    <ColumnDefinition Width="130" />
+                                    <ColumnDefinition Width="140" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Style="{StaticResource Caption}" Text="ITEM CODE" />
+                                <TextBlock Grid.Column="1" Style="{StaticResource Caption}" Text="DESCRIPTION" />
+                                <TextBlock Grid.Column="2" Style="{StaticResource Caption}" Text="QTY" HorizontalAlignment="Center" />
+                                <TextBlock Grid.Column="3" Style="{StaticResource Caption}" Text="ITEM PRICE" HorizontalAlignment="Right" />
+                                <TextBlock Grid.Column="4" Style="{StaticResource Caption}" Text="TOTAL AMOUNT" HorizontalAlignment="Right" />
+                            </Grid>
+                        </Border>
+                        <ListBox Grid.Row="1" ItemsSource="{Binding Lines}"
+                                 SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}"
+                                 Background="Transparent" BorderThickness="0"
+                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                 KeyboardNavigation.DirectionalNavigation="None"
+                                 HorizontalContentAlignment="Stretch">
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="ListBoxItem">
+                                    <Setter Property="Padding" Value="0" />
+                                    <Setter Property="Focusable" Value="False" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="ListBoxItem">
+                                                <Border x:Name="Row" Background="Transparent" BorderThickness="3,0,0,1"
+                                                        BorderBrush="{StaticResource Canvas}">
+                                                    <ContentPresenter />
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsSelected" Value="True">
+                                                        <Setter TargetName="Row" Property="Background" Value="{StaticResource GreenSoft}" />
+                                                        <Setter TargetName="Row" Property="BorderBrush" Value="{StaticResource Green}" />
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Padding="15,10">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="150" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="160" />
+                                                    <ColumnDefinition Width="130" />
+                                                    <ColumnDefinition Width="140" />
+                                                </Grid.ColumnDefinitions>
+                                                <StackPanel VerticalAlignment="Center">
+                                                    <TextBlock Style="{StaticResource BodyText}" FontWeight="Bold" Text="{Binding Code}" />
+                                                    <TextBlock Style="{StaticResource Caption}" FontSize="11" FontWeight="Normal" Text="{Binding Barcode}" />
+                                                </StackPanel>
+                                                <TextBlock Grid.Column="1" Style="{StaticResource BodyText}" FontWeight="SemiBold"
+                                                           Text="{Binding Name}" VerticalAlignment="Center" />
+                                                <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                    <Button Style="{StaticResource BtnKey}" Content="−" MinHeight="36" Width="36" Padding="0" FontSize="18" />
+                                                    <TextBlock Style="{StaticResource BodyText}" FontWeight="Bold" Text="{Binding Qty}"
+                                                               MinWidth="26" TextAlignment="Center" VerticalAlignment="Center" Margin="8,0" />
+                                                    <Button Style="{StaticResource BtnKey}" Content="+" MinHeight="36" Width="36" Padding="0" FontSize="18" />
+                                                </StackPanel>
+                                                <TextBlock Grid.Column="3" Style="{StaticResource TitleSection}" FontSize="15" FontWeight="Normal"
+                                                           HorizontalAlignment="Right" VerticalAlignment="Center" Text="{Binding Price, StringFormat=₱{0:N2}}" />
+                                                <TextBlock Grid.Column="4" Style="{StaticResource TitleSection}" FontSize="15"
+                                                           HorizontalAlignment="Right" VerticalAlignment="Center" Text="{Binding Total, StringFormat=₱{0:N2}}" />
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                        </ListBox>
+                    </Grid>
+                </Border>
+                <StackPanel Grid.Row="2" Margin="0,12,0,0">
+                    <DockPanel Margin="0,0,0,8">
+                        <TextBlock Style="{StaticResource Caption}" Text="POPULAR ITEMS · TOP 8, LAST 7 DAYS" VerticalAlignment="Bottom" />
+                        <TextBlock DockPanel.Dock="Right" Style="{StaticResource Caption}" FontSize="11" FontWeight="Normal"
+                                   Text="{Binding HotkeyHint}" HorizontalAlignment="Right" VerticalAlignment="Bottom" />
+                    </DockPanel>
+                    <ItemsControl ItemsSource="{Binding Popular}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <UniformGrid Columns="8" Rows="1" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Style="{StaticResource Card}" Height="84" Margin="0,0,8,0" Padding="10,8">
+                                    <DockPanel>
+                                        <TextBlock DockPanel.Dock="Top" Style="{StaticResource BodyText}" FontSize="12.5" FontWeight="SemiBold"
+                                                   Text="{Binding Name}" TextWrapping="Wrap" LineHeight="15" />
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom">
+                                            <TextBlock Style="{StaticResource TitleSection}" FontSize="15" FontWeight="SemiBold"
+                                                       Text="{Binding Price, StringFormat=₱{0:N2}}" />
+                                            <TextBlock Style="{StaticResource Caption}" FontSize="11" FontWeight="Normal"
+                                                       Text="{Binding SoldCaption}" VerticalAlignment="Bottom" Margin="4,0,0,1" />
+                                        </StackPanel>
+                                    </DockPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Grid>
+            <Border Grid.Column="2" Style="{StaticResource Card}" Padding="20">
+                <DockPanel>
+                    <DockPanel DockPanel.Dock="Top">
+                        <TextBlock Style="{StaticResource TitleSection}" FontSize="20" Text="Current sale" />
+                        <Border DockPanel.Dock="Right" Background="{StaticResource Paper2}" CornerRadius="12"
+                                Padding="10,4" HorizontalAlignment="Right" VerticalAlignment="Center">
+                            <TextBlock Style="{StaticResource BodyText}" FontSize="12" FontWeight="Bold"
+                                       Foreground="{StaticResource Ink2}" Text="{Binding ItemCountDisplay}" />
+                        </Border>
+                    </DockPanel>
+                    <StackPanel DockPanel.Dock="Bottom">
+                        <Border BorderBrush="{StaticResource Line}" BorderThickness="0,1,0,0" Padding="0,12,0,0">
+                            <StackPanel>
+                                <DockPanel Margin="0,0,0,6">
+                                    <TextBlock Style="{StaticResource BodyText}" Foreground="{StaticResource Ink2}" Text="Subtotal" />
+                                    <TextBlock DockPanel.Dock="Right" Style="{StaticResource TitleSection}" FontSize="15" FontWeight="Normal"
+                                               Foreground="{StaticResource Ink2}" Text="{Binding SubtotalDisplay}" HorizontalAlignment="Right" />
+                                </DockPanel>
+                                <DockPanel Margin="0,0,0,4">
+                                    <TextBlock Style="{StaticResource BodyText}" Foreground="{StaticResource Ink2}" Text="Discount" />
+                                    <TextBlock DockPanel.Dock="Right" Style="{StaticResource TitleSection}" FontSize="15" FontWeight="Normal"
+                                               Foreground="{StaticResource Ink2}" Text="{Binding DiscountDisplay}" HorizontalAlignment="Right" />
+                                </DockPanel>
+                                <DockPanel>
+                                    <TextBlock Style="{StaticResource Caption}" FontSize="12" FontWeight="Bold"
+                                               Foreground="{StaticResource Ink}" Text="TOTAL" VerticalAlignment="Center" />
+                                    <TextBlock DockPanel.Dock="Right" Style="{StaticResource MoneyLarge}" FontSize="44"
+                                               Text="{Binding TotalDisplay}" HorizontalAlignment="Right" />
+                                </DockPanel>
+                            </StackPanel>
+                        </Border>
+                        <Grid Margin="0,14,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="8" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Button Style="{StaticResource BtnGhost}" Content="Discount" MinHeight="44" FontWeight="SemiBold"
+                                    Foreground="{StaticResource Ink2}" Command="{Binding OpenDiscountCommand}" />
+                            <Button Grid.Column="2" Style="{StaticResource BtnGhost}" Content="Clear sale" MinHeight="44" FontWeight="SemiBold"
+                                    Foreground="{StaticResource Ink2}" />
+                        </Grid>
+                        <Button Style="{StaticResource BtnPayHero}" Content="PAYMENT — F5" FontSize="18" Margin="0,14,0,0"
+                                Command="{Binding OpenPaymentCommand}" />
+                    </StackPanel>
+                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <TextBlock Style="{StaticResource Caption}" Text="LAST ITEM" HorizontalAlignment="Center" />
+                        <TextBlock Style="{StaticResource BodyText}" FontSize="20" FontWeight="SemiBold"
+                                   Text="{Binding LastRungName}" HorizontalAlignment="Center" Margin="0,6,0,0" TextAlignment="Center" />
+                        <TextBlock Style="{StaticResource MoneyLarge}" FontSize="36" Text="{Binding LastRungTotal}"
+                                   HorizontalAlignment="Center" Margin="0,2,0,0" />
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+        </Grid>
+        <Grid Background="{StaticResource CanvasVeil}" Panel.ZIndex="30"
+              Visibility="{Binding ShellVm.Day.IsShiftOpen, Converter={StaticResource InverseBoolToVis}}">
+            <Border Style="{StaticResource ModalCard}" Padding="40,34" MaxWidth="460"
+                    HorizontalAlignment="Center" VerticalAlignment="Center" BorderBrush="{StaticResource LineStrong}">
+                <StackPanel>
+                    <TextBlock Style="{StaticResource TitleSection}" FontSize="24" FontWeight="Bold"
+                               Text="{Binding LockedTitle}" HorizontalAlignment="Center" />
+                    <TextBlock Style="{StaticResource BodyText}" Foreground="{StaticResource Ink2}"
+                               Text="{Binding LockedBody}" TextWrapping="Wrap" TextAlignment="Center" Margin="0,12,0,20" />
+                    <Button Style="{StaticResource BtnPrimary}" Content="DECLARE STARTING CASH" MinHeight="52" Padding="26,0"
+                            HorizontalAlignment="Center" Command="{Binding OpenStartingCashCommand}" />
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

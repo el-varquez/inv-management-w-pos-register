@@ -1,0 +1,15 @@
+<UserControl x:Class="POS.Register.Components.NumpadView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UniformGrid Columns="3" Rows="4">
+        <UniformGrid.Resources>
+            <Style TargetType="Button" BasedOn="{StaticResource BtnKey}">
+                <Setter Property="Margin" Value="4" />
+            </Style>
+        </UniformGrid.Resources>
+        <Button Content="1" /><Button Content="2" /><Button Content="3" />
+        <Button Content="4" /><Button Content="5" /><Button Content="6" />
+        <Button Content="7" /><Button Content="8" /><Button Content="9" />
+        <Button Content="00" /><Button Content="0" /><Button Content="&#x232B;" />
+    </UniformGrid>
+</UserControl>
