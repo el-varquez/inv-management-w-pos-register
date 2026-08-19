@@ -6,6 +6,9 @@ using POS.Register.Features.Sales.Screens;
 using POS.Register.Features.Sell.Screens;
 using POS.Register.Features.Shifts.Screens;
 using POS.Register.Lib;
+using POS.Register.Services;
+using POS.Register.Store;
+using POS.Register.Types;
 
 namespace POS.Register.Shell;
 
@@ -13,6 +16,7 @@ public partial class ShellViewModel : ObservableObject
 {
     private readonly DispatcherTimer _toastTimer;
     private readonly DispatcherTimer _clockTimer;
+    private readonly AppServices _services;
 
     public DayState Day { get; } = new();
     public LoginScreenViewModel Login { get; }
@@ -20,8 +24,8 @@ public partial class ShellViewModel : ObservableObject
     public SalesScreenViewModel Sales { get; }
     public ShiftScreenViewModel Shift { get; }
 
-    public string StoreName => CannedDay.StoreName;
-    public string CashierName => CannedDay.CashierName;
+    public SessionStore Session => _services.Session;
+    public SettingsStore Settings => _services.Settings;
     public string DateShort => DateTime.Now.ToString("ddd, MMM d");
 
     [ObservableProperty]
@@ -44,7 +48,9 @@ public partial class ShellViewModel : ObservableObject
 
     public ShellViewModel()
     {
-        Login = new LoginScreenViewModel();
+        _services = new AppServices();
+        _services.SessionExpired += OnSessionExpired;
+        Login = new LoginScreenViewModel(this, _services.Auth, _services.Settings);
         Sell = new SellScreenViewModel(this);
         Sales = new SalesScreenViewModel(this);
         Shift = new ShiftScreenViewModel(this);
@@ -54,13 +60,37 @@ public partial class ShellViewModel : ObservableObject
         _clockTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
         _clockTimer.Tick += (_, _) => Clock = DateTime.Now.ToString("h:mm tt");
         _clockTimer.Start();
+        _ = LoadStoreNameAsync();
     }
 
-    [RelayCommand]
-    private void EnterApp()
+    public void EnterSession(LoginResponse result)
     {
+        Session.Set(result.Token!, result.Name ?? "", result.Username ?? "", result.Role ?? "");
         IsLoggedIn = true;
         Navigate("Sell");
+        _ = LoadStoreNameAsync();
+    }
+
+    private async Task LoadStoreNameAsync()
+    {
+        try
+        {
+            Settings.StoreName = (await _services.StoreSettings.GetStoreNameAsync()).StoreName;
+        }
+        catch (ApiException ex)
+        {
+            ShowToast(ex.Message);
+        }
+    }
+
+    private void OnSessionExpired()
+    {
+        if (!IsLoggedIn)
+        {
+            return;
+        }
+        Lock();
+        ShowToast("Session expired — log in again.");
     }
 
     [RelayCommand]
@@ -78,6 +108,8 @@ public partial class ShellViewModel : ObservableObject
     [RelayCommand]
     private void Lock()
     {
+        Session.Clear();
+        Login.Reset();
         IsLoggedIn = false;
         ActiveModal = null;
     }
@@ -95,7 +127,7 @@ public partial class ShellViewModel : ObservableObject
         }
         if (!IsLoggedIn)
         {
-            EnterApp();
+            Login.Submit();
             return;
         }
         if (ReferenceEquals(CurrentScreen, Sell) && Sell.ShowResults)
