@@ -1,7 +1,63 @@
 <Application x:Class="POS.Register.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:auth="clr-namespace:POS.Register.Features.Auth.Screens"
+             xmlns:sell="clr-namespace:POS.Register.Features.Sell.Screens"
+             xmlns:sales="clr-namespace:POS.Register.Features.Sales.Screens"
+             xmlns:shifts="clr-namespace:POS.Register.Features.Shifts.Screens"
+             xmlns:comp="clr-namespace:POS.Register.Components"
+             xmlns:sellcomp="clr-namespace:POS.Register.Features.Sell.Components"
+             xmlns:salescomp="clr-namespace:POS.Register.Features.Sales.Components"
+             xmlns:shiftcomp="clr-namespace:POS.Register.Features.Shifts.Components"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Themes/Tokens.xaml" />
+                <ResourceDictionary Source="Themes/Typography.xaml" />
+                <ResourceDictionary Source="Themes/Controls.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <DataTemplate DataType="{x:Type auth:LoginScreenViewModel}">
+                <auth:LoginScreenView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type sell:SellScreenViewModel}">
+                <sell:SellScreenView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type sales:SalesScreenViewModel}">
+                <sales:SalesScreenView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type shifts:ShiftScreenViewModel}">
+                <shifts:ShiftScreenView />
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type comp:PaymentModalViewModel}">
+                <comp:PaymentModalView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type comp:StartingCashModalViewModel}">
+                <comp:StartingCashModalView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type comp:SuccessModalViewModel}">
+                <comp:SuccessModalView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type comp:AdminOverrideModalViewModel}">
+                <comp:AdminOverrideModalView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type sellcomp:DiscountModalViewModel}">
+                <sellcomp:DiscountModalView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type sellcomp:QtyModalViewModel}">
+                <sellcomp:QtyModalView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type salescomp:DetailModalViewModel}">
+                <salescomp:DetailModalView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type shiftcomp:MovementModalViewModel}">
+                <shiftcomp:MovementModalView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type shiftcomp:ZReadModalViewModel}">
+                <shiftcomp:ZReadModalView />
+            </DataTemplate>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

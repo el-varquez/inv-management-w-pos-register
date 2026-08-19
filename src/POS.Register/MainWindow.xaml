@@ -1,11 +1,52 @@
 <Window x:Class="POS.Register.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:shell="clr-namespace:POS.Register.Shell"
+        xmlns:lib="clr-namespace:POS.Register.Lib"
         Title="POS Register"
         WindowStyle="None"
         WindowState="Maximized"
-        ResizeMode="NoResize">
+        ResizeMode="NoResize"
+        Background="{StaticResource Paper2}">
+    <Window.DataContext>
+        <shell:ShellViewModel />
+    </Window.DataContext>
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        <lib:InverseBoolToVisibilityConverter x:Key="InverseBoolToVis" />
+        <lib:NullToCollapsedConverter x:Key="NullToCollapsed" />
+    </Window.Resources>
     <Viewbox Stretch="Uniform">
-        <Grid Width="1920" Height="1080" />
+        <Grid Width="1920" Height="1080" Background="{StaticResource Canvas}">
+            <Grid Visibility="{Binding IsLoggedIn, Converter={StaticResource BoolToVis}}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="84" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <shell:RailView />
+                <Grid Grid.Column="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <shell:TopbarView />
+                    <ContentControl Grid.Row="1" Content="{Binding CurrentScreen}" Focusable="False" />
+                </Grid>
+            </Grid>
+            <ContentControl Content="{Binding Login}" Focusable="False"
+                            Visibility="{Binding IsLoggedIn, Converter={StaticResource InverseBoolToVis}}" />
+            <Grid x:Name="ModalHost" Background="{StaticResource Scrim}" Focusable="True"
+                  Visibility="{Binding ActiveModal, Converter={StaticResource NullToCollapsed}}">
+                <ContentControl Content="{Binding ActiveModal}" Focusable="False"
+                                HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </Grid>
+            <Border Background="{StaticResource Ink}" CornerRadius="22" Padding="24,13"
+                    HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,26"
+                    Effect="{StaticResource ShadowLg}"
+                    Visibility="{Binding Toast, Converter={StaticResource NullToCollapsed}}">
+                <TextBlock Style="{StaticResource BodyText}" Foreground="{StaticResource Paper}"
+                           FontSize="14" FontWeight="SemiBold" Text="{Binding Toast}" />
+            </Border>
+        </Grid>
     </Viewbox>
 </Window>

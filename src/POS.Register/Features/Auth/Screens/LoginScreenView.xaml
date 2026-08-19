@@ -1,0 +1,61 @@
+<UserControl x:Class="POS.Register.Features.Auth.Screens.LoginScreenView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid>
+    <Button Style="{StaticResource BtnGhost}" Content="&#x2715;" Width="44" MinHeight="44" Padding="0"
+            FontSize="16" Foreground="{StaticResource Ink3}"
+            HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,20,20,0"
+            Click="OnCloseClick" />
+    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Width="420">
+        <TextBlock Style="{StaticResource TitleSection}" FontSize="36" FontWeight="Bold"
+                   Text="{Binding StoreName}" HorizontalAlignment="Center" />
+        <TextBlock Style="{StaticResource Caption}" HorizontalAlignment="Center" Margin="0,8,0,26">
+            <Run Text="POS REGISTER &#183; " /><Run Text="{Binding DateLong, Mode=OneWay}" />
+        </TextBlock>
+        <Border Style="{StaticResource ModalCard}" Padding="34">
+            <StackPanel>
+                <TextBlock Style="{StaticResource TitleSection}" FontSize="24" Text="Log in"
+                           HorizontalAlignment="Center" Margin="0,0,0,20" />
+                <TextBlock Style="{StaticResource Caption}" Text="USERNAME" Margin="0,0,0,7" />
+                <Grid Margin="0,0,0,16">
+                    <TextBox x:Name="UsernameBox" Style="{StaticResource InputText}" />
+                    <TextBlock Text="e.g. nena" Margin="14,0" VerticalAlignment="Center" IsHitTestVisible="False">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock" BasedOn="{StaticResource BodyText}">
+                                <Setter Property="Foreground" Value="{StaticResource Ink3}" />
+                                <Setter Property="Visibility" Value="Collapsed" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Text, ElementName=UsernameBox}" Value="">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </Grid>
+                <TextBlock Style="{StaticResource Caption}" Text="PASSWORD" Margin="0,0,0,7" />
+                <Grid Margin="0,0,0,22">
+                    <PasswordBox x:Name="PasswordBoxField" MinHeight="46" FontSize="16"
+                                 VerticalContentAlignment="Center" Padding="12,10"
+                                 Background="{StaticResource Surface2}" BorderBrush="{StaticResource Line}" />
+                    <TextBlock Text="Your password" Margin="14,0" VerticalAlignment="Center" IsHitTestVisible="False">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock" BasedOn="{StaticResource BodyText}">
+                                <Setter Property="Foreground" Value="{StaticResource Ink3}" />
+                                <Setter Property="Visibility" Value="Visible" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsFocused, ElementName=PasswordBoxField}" Value="True">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </Grid>
+                <Button Style="{StaticResource BtnPrimary}" Content="LOG IN"
+                        Command="{Binding DataContext.EnterAppCommand, RelativeSource={RelativeSource AncestorType=Window}}" />
+            </StackPanel>
+        </Border>
+    </StackPanel>
+    </Grid>
+</UserControl>
