@@ -26,8 +26,10 @@ public partial class ShellViewModel : ObservableObject
     public SessionStore Session => _services.Session;
     public SettingsStore Settings => _services.Settings;
     public ShiftStore Day => _services.ShiftState;
+    public CartStore Cart => _services.Cart;
     public ShiftService ShiftApi => _services.Shifts;
     public DayService DayApi => _services.Days;
+    public POS.Register.Features.Sell.Services.SellService SellApi => _services.Sell;
 
     public Task<LoginResponse> AuthenticateAsync(string username, string password)
         => _services.Auth.LoginAsync(username, password);
@@ -76,6 +78,7 @@ public partial class ShellViewModel : ObservableObject
         _ = LoadStoreNameAsync();
         _ = LoadSettingsAsync();
         _ = RefreshShiftAsync();
+        _ = Sell.RefreshPopularAsync();
     }
 
     public async Task RefreshShiftAsync()
@@ -186,9 +189,9 @@ public partial class ShellViewModel : ObservableObject
             Login.Submit();
             return;
         }
-        if (ReferenceEquals(CurrentScreen, Sell) && Sell.ShowResults)
+        if (ReferenceEquals(CurrentScreen, Sell) && Sell.HasQuery)
         {
-            Sell.ClearSearch();
+            _ = Sell.CommitSearchAsync();
         }
     }
 
@@ -204,6 +207,8 @@ public partial class ShellViewModel : ObservableObject
     public void OpenModal(object modal) => ActiveModal = modal;
 
     public void CloseModal() => ActiveModal = null;
+
+    public void FocusScan() => Sell.RequestScanFocus();
 
     public void ShowToast(string message)
     {

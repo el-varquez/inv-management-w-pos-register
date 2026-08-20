@@ -11,7 +11,9 @@
                     <TextBlock Style="{StaticResource Caption}" Text="AMOUNT OFF" VerticalAlignment="Center" />
                     <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right">
                         <TextBlock Style="{StaticResource MoneyModal}" FontSize="30" Text="₱" Margin="0,0,4,0" />
-                        <TextBlock Style="{StaticResource MoneyModal}" FontSize="30" Text="0" />
+                        <TextBox x:Name="AmountBox" Style="{StaticResource InputText}" FontSize="30" MinWidth="120"
+                                 BorderThickness="0" Background="Transparent" TextAlignment="Right"
+                                 Text="{Binding AmountText, UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>
                 </DockPanel>
             </Border>

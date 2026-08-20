@@ -7,5 +7,10 @@ public partial class QtyModalView : UserControl
     public QtyModalView()
     {
         InitializeComponent();
+        Loaded += (_, _) =>
+        {
+            QtyBox.Focus();
+            QtyBox.SelectAll();
+        };
     }
 }

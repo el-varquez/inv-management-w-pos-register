@@ -1,14 +1,5 @@
 namespace POS.Register.Lib;
 
-public record CartLine(string Code, string Barcode, string Name, int Qty, decimal Price)
-{
-    public decimal Total => Qty * Price;
-}
-
-public record PopularItem(string Name, decimal Price, string SoldCaption);
-
-public record SearchResult(string Code, string Name, string Barcode, string StockCaption, decimal Price, bool OutOfStock);
-
 public record SaleRow(string Receipt, string Time, int Items, string Payment, decimal Amount, bool Refunded)
 {
     public string Status => Refunded ? "Refunded" : "Completed";
@@ -32,45 +23,7 @@ public static class CannedDay
 
     public const string LockedTitle = "No starting cash declared";
 
-    public static readonly IReadOnlyList<CartLine> Cart =
-    [
-        new("1003", "4807770190162", "Lucky Me Pancit Canton Original", 3, 18m),
-        new("1001", "4801981126712", "Coke Mismo 300ml", 2, 25m),
-        new("1007", "4800016641503", "Sky Flakes Crackers 25g", 1, 12m),
-    ];
-
-    public const string ItemCountDisplay = "6 items";
-    public const string LastRungName = "Sky Flakes Crackers 25g";
-    public const string LastRungTotal = "₱12.00";
-    public const decimal Subtotal = 116m;
-    public const decimal Discount = 0m;
-    public const decimal CartTotal = 116m;
-    public const string TenderedDisplay = "200";
-    public const string ChangeDisplay = "₱84.00";
-    public const string SuccessReceipt = "Receipt R-20260818-0016 · Cash";
-
-    public static readonly IReadOnlyList<string> QuickBills = ["EXACT", "₱200", "₱500", "₱1,000"];
-
     public const string HotkeyHint = "F1 search · ↑/↓ select line · F2 edit qty · F6 void line · F5 payment · F7 utang · Esc close";
-
-    public static readonly IReadOnlyList<PopularItem> Popular =
-    [
-        new("Lucky Me Pancit Canton", 18m, "· 142 sold"),
-        new("Coke Mismo 300ml", 25m, "· 98 sold"),
-        new("Kopiko Blanca Twin", 12m, "· 91 sold"),
-        new("Sky Flakes 25g", 12m, "· 77 sold"),
-        new("Nescafé 3-in-1", 10m, "· 74 sold"),
-        new("Piattos Cheese 40g", 22m, "· 58 sold"),
-        new("C2 Apple 355ml", 20m, "· 55 sold"),
-        new("Hansel Mocha", 8m, "· 49 sold"),
-    ];
-
-    public static readonly IReadOnlyList<SearchResult> Results =
-    [
-        new("1001", "Coke Mismo 300ml", "4801981126712", "Stock 46", 25m, false),
-        new("1031", "Coke 1L", "4801981145301", "Stock 12", 65m, false),
-        new("1058", "Coke Zero Mismo 300ml", "4801981119906", "Out of stock", 28m, true),
-    ];
 
     public static readonly IReadOnlyList<SaleRow> Sales =
     [

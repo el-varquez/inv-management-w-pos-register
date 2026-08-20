@@ -11,8 +11,9 @@
                     CornerRadius="{StaticResource RadiusControl}" Padding="18,12" Margin="0,0,0,14">
                 <DockPanel>
                     <TextBlock Style="{StaticResource Caption}" Text="QTY" VerticalAlignment="Center" />
-                    <TextBlock DockPanel.Dock="Right" Style="{StaticResource MoneyModal}" FontSize="30"
-                               Text="{Binding Line.Qty}" HorizontalAlignment="Right" />
+                    <TextBox x:Name="QtyBox" DockPanel.Dock="Right" Style="{StaticResource InputText}" FontSize="30" MinWidth="120"
+                             BorderThickness="0" Background="Transparent" TextAlignment="Right"
+                             Text="{Binding QtyText, UpdateSourceTrigger=PropertyChanged}" />
                 </DockPanel>
             </Border>
             <comp:NumpadView Margin="0,0,0,14" />

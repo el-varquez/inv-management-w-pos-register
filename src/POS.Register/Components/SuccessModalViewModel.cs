@@ -1,6 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using POS.Register.Lib;
 using AppShell = POS.Register.Shell;
 
 namespace POS.Register.Components;
@@ -12,11 +11,20 @@ public partial class SuccessModalViewModel : ObservableObject, AppShell.IDefault
 
     private readonly AppShell.ShellViewModel _shell;
 
-    public string ReceiptCaption => CannedDay.SuccessReceipt;
-    public string ChangeDisplay => CannedDay.ChangeDisplay;
+    public string ReceiptCaption { get; }
+    public string ChangeDisplay { get; }
 
-    public SuccessModalViewModel(AppShell.ShellViewModel shell) => _shell = shell;
+    public SuccessModalViewModel(AppShell.ShellViewModel shell, string receiptCaption, string changeDisplay)
+    {
+        _shell = shell;
+        ReceiptCaption = receiptCaption;
+        ChangeDisplay = changeDisplay;
+    }
 
     [RelayCommand]
-    private void NewSale() => _shell.CloseModal();
+    private void NewSale()
+    {
+        _shell.CloseModal();
+        _shell.FocusScan();
+    }
 }
