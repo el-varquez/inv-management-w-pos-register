@@ -1,6 +1,8 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using POS.Register.Features.Sales.Screens;
 using POS.Register.Lib;
+using POS.Register.Services;
 using SharedComp = POS.Register.Components;
 using AppShell = POS.Register.Shell;
 
@@ -14,24 +16,41 @@ public partial class DetailModalViewModel : ObservableObject, AppShell.IDefaultA
     private readonly AppShell.ShellViewModel _shell;
 
     public SaleRow Row { get; }
-    public IReadOnlyList<SaleLine> Lines => CannedDay.DetailLines;
+    public IReadOnlyList<SaleLine> Lines { get; }
     public string TotalDisplay => Peso.Format(Row.Amount);
     public string TimeAndPay => Row.Time + " · " + Row.Payment;
 
-    public DetailModalViewModel(AppShell.ShellViewModel shell, SaleRow row)
+    public DetailModalViewModel(
+        AppShell.ShellViewModel shell, SaleRow row, IReadOnlyList<SaleLine> lines)
     {
         _shell = shell;
         Row = row;
+        Lines = lines;
     }
 
     [RelayCommand]
     private void Refund()
     {
-        var receipt = Row.Receipt;
         _shell.OpenModal(new SharedComp.AdminOverrideModalViewModel(
             _shell,
-            "Refund sale " + receipt,
-            () => _shell.ShowToast("Sale " + receipt + " refunded — stock restored, money returned")));
+            "Refund sale " + Row.Receipt,
+            token => _ = CompleteRefundAsync(token)));
+    }
+
+    private async Task CompleteRefundAsync(string adminToken)
+    {
+        try
+        {
+            await _shell.SalesApi.RefundAsync(Row.Id, adminToken);
+            _shell.OpenModal(new DetailModalViewModel(
+                _shell, Row with { Refunded = true }, Lines));
+            _shell.ShowToast("Sale " + Row.Receipt + " refunded — stock restored, money returned");
+            _ = _shell.Sales.LoadAsync();
+        }
+        catch (ApiException ex)
+        {
+            _shell.ShowToast(ex.Message);
+        }
     }
 
     [RelayCommand]

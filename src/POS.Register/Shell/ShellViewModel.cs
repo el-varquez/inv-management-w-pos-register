@@ -30,6 +30,7 @@ public partial class ShellViewModel : ObservableObject
     public ShiftService ShiftApi => _services.Shifts;
     public DayService DayApi => _services.Days;
     public POS.Register.Features.Sell.Services.SellService SellApi => _services.Sell;
+    public POS.Register.Features.Sales.Services.SalesService SalesApi => _services.Sales;
 
     public Task<LoginResponse> AuthenticateAsync(string username, string password)
         => _services.Auth.LoginAsync(username, password);
@@ -161,6 +162,10 @@ public partial class ShellViewModel : ObservableObject
         if (name == "Shift" && IsLoggedIn)
         {
             _ = RefreshShiftAsync();
+        }
+        if (name == "Sales" && IsLoggedIn)
+        {
+            _ = Sales.LoadAsync();
         }
     }
 

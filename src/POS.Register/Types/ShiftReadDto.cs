@@ -18,6 +18,8 @@ public record ShiftReadDto(
     string? StartingCashCorrectionReason,
     decimal NetSales,
     int TransactionCount,
+    decimal Refunds,
+    int RefundCount,
     decimal CashSales,
     decimal GcashSales,
     decimal MayaSales,

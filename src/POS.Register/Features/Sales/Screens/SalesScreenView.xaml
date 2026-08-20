@@ -39,6 +39,9 @@
                         <TextBlock Grid.Column="5" Style="{StaticResource Caption}" Text="STATUS" HorizontalAlignment="Right" />
                     </Grid>
                 </Border>
+                <TextBlock Grid.Row="2" Style="{StaticResource BodyText}" Foreground="{StaticResource Ink3}"
+                           Text="No sales yet today" HorizontalAlignment="Center" Margin="0,48"
+                           Visibility="{Binding IsEmpty, Converter={StaticResource BoolToVis}}" />
                 <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
                     <ItemsControl ItemsSource="{Binding Rows}">
                         <ItemsControl.ItemTemplate>

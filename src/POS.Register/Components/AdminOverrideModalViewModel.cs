@@ -12,7 +12,7 @@ public partial class AdminOverrideModalViewModel : ObservableObject, AppShell.ID
     public ICommand DismissCommand => CancelCommand;
 
     private readonly AppShell.ShellViewModel _shell;
-    private readonly Action _onApproved;
+    private readonly Action<string> _onApproved;
 
     public string Reason { get; }
 
@@ -30,7 +30,7 @@ public partial class AdminOverrideModalViewModel : ObservableObject, AppShell.ID
     [ObservableProperty]
     private bool isBusy;
 
-    public AdminOverrideModalViewModel(AppShell.ShellViewModel shell, string reason, Action onApproved)
+    public AdminOverrideModalViewModel(AppShell.ShellViewModel shell, string reason, Action<string> onApproved)
     {
         _shell = shell;
         _onApproved = onApproved;
@@ -60,7 +60,7 @@ public partial class AdminOverrideModalViewModel : ObservableObject, AppShell.ID
                 return;
             }
             _shell.CloseModal();
-            _onApproved();
+            _onApproved(login.Token!);
         }
         catch (ApiException ex)
         {

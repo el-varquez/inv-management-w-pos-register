@@ -1,4 +1,5 @@
 using POS.Register.Features.Auth.Services;
+using POS.Register.Features.Sales.Services;
 using POS.Register.Features.Sell.Services;
 using POS.Register.Store;
 
@@ -15,6 +16,7 @@ public class AppServices
     public ShiftService Shifts { get; }
     public DayService Days { get; }
     public SellService Sell { get; }
+    public SalesService Sales { get; }
 
     public event Action? SessionExpired;
 
@@ -27,5 +29,6 @@ public class AppServices
         Shifts = new ShiftService(client);
         Days = new DayService(client);
         Sell = new SellService(client);
+        Sales = new SalesService(client);
     }
 }
