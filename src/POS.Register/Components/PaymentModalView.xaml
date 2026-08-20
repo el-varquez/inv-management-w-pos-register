@@ -11,25 +11,27 @@
         <StackPanel>
             <TextBlock Style="{StaticResource TitleSection}" FontSize="22" FontWeight="Bold" Text="Payment" Margin="0,0,0,14" />
             <TextBlock Style="{StaticResource Caption}" Text="PAYMENT METHOD" Margin="0,0,0,6" />
-            <Grid Margin="0,0,0,14">
-                <StackPanel>
-                    <Button Command="{Binding ToggleMethodCommand}" MinHeight="52" Cursor="Hand">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Border Background="{StaticResource Surface}" BorderBrush="{StaticResource Green}"
-                                        BorderThickness="1.5" CornerRadius="{StaticResource RadiusControl}" Padding="16,0"
-                                        MinHeight="52">
-                                    <DockPanel VerticalAlignment="Center">
-                                        <TextBlock DockPanel.Dock="Right" Style="{StaticResource BodyText}" FontSize="13"
-                                                   Foreground="{StaticResource Ink3}" Text="▾" VerticalAlignment="Center" />
-                                        <TextBlock Style="{StaticResource BodyText}" FontSize="16" FontWeight="SemiBold"
-                                                   Text="{Binding Method}" VerticalAlignment="Center" />
-                                    </DockPanel>
-                                </Border>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
-                    <Border Style="{StaticResource Card}" Margin="0,6,0,0" Padding="0"
+            <Grid Margin="0,0,0,14" Panel.ZIndex="20">
+                <Button x:Name="MethodButton" Command="{Binding ToggleMethodCommand}" MinHeight="52" Cursor="Hand">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{StaticResource Surface}" BorderBrush="{StaticResource Green}"
+                                    BorderThickness="1.5" CornerRadius="{StaticResource RadiusControl}" Padding="16,0"
+                                    MinHeight="52">
+                                <DockPanel VerticalAlignment="Center">
+                                    <TextBlock DockPanel.Dock="Right" Style="{StaticResource BodyText}" FontSize="13"
+                                               Foreground="{StaticResource Ink3}" Text="▾" VerticalAlignment="Center" />
+                                    <TextBlock Style="{StaticResource BodyText}" FontSize="16" FontWeight="SemiBold"
+                                               Text="{Binding Method}" VerticalAlignment="Center" />
+                                </DockPanel>
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+                <Canvas VerticalAlignment="Bottom" Height="0">
+                    <Border Canvas.Top="6" Style="{StaticResource Card}" Padding="0"
+                            Width="{Binding ActualWidth, ElementName=MethodButton}"
+                            Effect="{StaticResource ShadowLg}"
                             Visibility="{Binding IsMethodOpen, Converter={StaticResource BoolToVis}}">
                         <StackPanel>
                             <Button Style="{StaticResource BtnGhost}" BorderThickness="0" Content="CASH" HorizontalContentAlignment="Left"
@@ -40,7 +42,7 @@
                                     Command="{Binding PickMethodCommand}" CommandParameter="MAYA" />
                         </StackPanel>
                     </Border>
-                </StackPanel>
+                </Canvas>
             </Grid>
             <Border Background="{StaticResource Surface2}" CornerRadius="{StaticResource RadiusControl}" Padding="18,14" Margin="0,0,0,14">
                 <DockPanel>
@@ -56,7 +58,9 @@
                         <TextBlock Style="{StaticResource Caption}" Text="TENDERED" VerticalAlignment="Center" />
                         <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right">
                             <TextBlock Style="{StaticResource MoneyModal}" FontSize="30" Text="₱" Margin="0,0,4,0" />
-                            <TextBlock Style="{StaticResource MoneyModal}" FontSize="30" Text="{Binding TenderedDisplay}" />
+                            <TextBox x:Name="TenderedBox" Style="{StaticResource InputText}" FontSize="30" MinWidth="150"
+                                     BorderThickness="0" Background="Transparent" TextAlignment="Right"
+                                     Text="{Binding TenderedText, UpdateSourceTrigger=PropertyChanged}" />
                         </StackPanel>
                     </DockPanel>
                 </Border>
@@ -69,20 +73,48 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Button Style="{StaticResource BtnKey}" MinHeight="40" FontSize="14" Padding="14,0"
-                                    Content="{Binding}" Margin="0,0,6,0" />
+                                    Content="{Binding Label}" Margin="0,0,6,0"
+                                    Command="{Binding DataContext.PickBillCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                    CommandParameter="{Binding}" />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
                 <comp:NumpadView Margin="0,0,0,10" />
                 <DockPanel Margin="0,0,0,4">
                     <TextBlock Style="{StaticResource Caption}" Text="CHANGE" VerticalAlignment="Center" />
-                    <TextBlock DockPanel.Dock="Right" Style="{StaticResource MoneyModal}" FontSize="30"
-                               Foreground="{StaticResource Confirm}" Text="{Binding ChangeDisplay}"
-                               HorizontalAlignment="Right" />
+                    <TextBlock DockPanel.Dock="Right" FontSize="30" Text="{Binding ChangeDisplay}"
+                               HorizontalAlignment="Right">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock" BasedOn="{StaticResource MoneyModal}">
+                                <Setter Property="Foreground" Value="{StaticResource Confirm}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsInsufficient}" Value="True">
+                                        <Setter Property="Foreground" Value="{StaticResource Red}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
                 </DockPanel>
             </StackPanel>
             <StackPanel Visibility="{Binding IsCash, Converter={StaticResource InverseBoolToVis}}">
-                <TextBox Style="{StaticResource InputText}" FontSize="17" MinHeight="52" Margin="0,0,0,8" />
+                <Grid Margin="0,0,0,8">
+                    <TextBox x:Name="ReferenceBox" Style="{StaticResource InputText}" FontSize="17" MinHeight="52"
+                             Text="{Binding ReferenceText, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBlock Text="{Binding ReferencePlaceholder}" Margin="16,0" VerticalAlignment="Center" IsHitTestVisible="False">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock" BasedOn="{StaticResource BodyText}">
+                                <Setter Property="Foreground" Value="{StaticResource Ink3}" />
+                                <Setter Property="Visibility" Value="Collapsed" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Text, ElementName=ReferenceBox}" Value="">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </Grid>
                 <TextBlock Style="{StaticResource BodyText}" FontSize="12" Foreground="{StaticResource Ink3}"
                            Text="{Binding EwalletCaption}" TextWrapping="Wrap" Margin="0,0,0,8" />
             </StackPanel>

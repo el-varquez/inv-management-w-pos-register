@@ -42,7 +42,7 @@ public partial class MainWindow : Window
                 shell.DismissCommand.Execute(null);
                 e.Handled = true;
             }
-            else if (shell.IsLoggedIn && ReferenceEquals(shell.CurrentScreen, shell.Sell) && shell.Sell.ShowResults)
+            else if (shell.IsLoggedIn && ReferenceEquals(shell.CurrentScreen, shell.Sell) && shell.Sell.HasQuery)
             {
                 shell.Sell.ClearSearch();
                 e.Handled = true;
