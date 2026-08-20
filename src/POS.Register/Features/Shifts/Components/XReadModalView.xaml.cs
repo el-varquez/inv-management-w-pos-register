@@ -3,14 +3,14 @@ using System.Windows.Input;
 
 namespace POS.Register.Features.Shifts.Components;
 
-public partial class MovementModalView : UserControl
+public partial class XReadModalView : UserControl
 {
-    public MovementModalView()
+    public XReadModalView()
     {
         InitializeComponent();
     }
 
-    private void OnAmountTextInput(object sender, TextCompositionEventArgs e)
+    private void OnWalletTextInput(object sender, TextCompositionEventArgs e)
     {
         e.Handled = !e.Text.All(char.IsAsciiDigit);
     }

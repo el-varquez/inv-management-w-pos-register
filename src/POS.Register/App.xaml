@@ -55,8 +55,11 @@
             <DataTemplate DataType="{x:Type shiftcomp:MovementModalViewModel}">
                 <shiftcomp:MovementModalView />
             </DataTemplate>
-            <DataTemplate DataType="{x:Type shiftcomp:ZReadModalViewModel}">
-                <shiftcomp:ZReadModalView />
+            <DataTemplate DataType="{x:Type shiftcomp:XReadModalViewModel}">
+                <shiftcomp:XReadModalView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type comp:DayCloseModalViewModel}">
+                <comp:DayCloseModalView />
             </DataTemplate>
         </ResourceDictionary>
     </Application.Resources>

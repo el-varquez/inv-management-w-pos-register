@@ -9,4 +9,7 @@ public class SettingsService
 
     public Task<StoreNameResponse> GetStoreNameAsync()
         => _api.GetAsync<StoreNameResponse>("settings/store-name");
+
+    public Task<StoreSettingsDto> GetSettingsAsync()
+        => _api.GetAsync<StoreSettingsDto>("settings");
 }

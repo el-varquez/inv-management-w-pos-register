@@ -287,7 +287,8 @@
                     <TextBlock Style="{StaticResource BodyText}" Foreground="{StaticResource Ink2}"
                                Text="{Binding LockedBody}" TextWrapping="Wrap" TextAlignment="Center" Margin="0,12,0,20" />
                     <Button Style="{StaticResource BtnPrimary}" Content="DECLARE STARTING CASH" MinHeight="52" Padding="26,0"
-                            HorizontalAlignment="Center" Command="{Binding OpenStartingCashCommand}" />
+                            HorizontalAlignment="Center" Command="{Binding OpenStartingCashCommand}"
+                            Visibility="{Binding CanOpenShift, Converter={StaticResource BoolToVis}}" />
                 </StackPanel>
             </Border>
         </Grid>

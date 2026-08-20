@@ -38,13 +38,15 @@
                     CornerRadius="{StaticResource RadiusControl}" Padding="18,10" Margin="0,0,0,14">
                 <DockPanel>
                     <TextBlock Style="{StaticResource MoneyModal}" FontSize="28" Text="₱" VerticalAlignment="Center" />
-                    <TextBlock DockPanel.Dock="Right" Style="{StaticResource MoneyModal}" FontSize="28"
-                               Text="{Binding AmountDisplay}" HorizontalAlignment="Right" />
-                    <Grid />
+                    <TextBox x:Name="AmountBox" BorderThickness="0" Background="Transparent" TextAlignment="Right"
+                             FontFamily="{StaticResource FontDisplay}" FontSize="28" FontWeight="Bold"
+                             Foreground="{StaticResource Ink}" VerticalAlignment="Center" MaxLength="7"
+                             Text="{Binding Amount.Digits, UpdateSourceTrigger=PropertyChanged}"
+                             PreviewTextInput="OnAmountTextInput" />
                 </DockPanel>
             </Border>
             <TextBlock Style="{StaticResource Caption}" Text="WHAT WAS IT FOR? (REQUIRED)" Margin="0,0,0,7" />
-            <TextBox Style="{StaticResource InputText}" MinHeight="48" Text="{Binding NoteDisplay, Mode=OneWay}" Margin="0,0,0,14" />
+            <TextBox Style="{StaticResource InputText}" MinHeight="48" Text="{Binding Note, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,14" />
             <Border Background="{StaticResource Surface2}" CornerRadius="{StaticResource RadiusControl}" Padding="18,13" Margin="0,0,0,14">
                 <DockPanel>
                     <TextBlock Style="{StaticResource Caption}" FontSize="13" FontWeight="Bold"

@@ -18,7 +18,6 @@ public partial class ShellViewModel : ObservableObject
     private readonly DispatcherTimer _clockTimer;
     private readonly AppServices _services;
 
-    public DayState Day { get; } = new();
     public LoginScreenViewModel Login { get; }
     public SellScreenViewModel Sell { get; }
     public SalesScreenViewModel Sales { get; }
@@ -26,6 +25,12 @@ public partial class ShellViewModel : ObservableObject
 
     public SessionStore Session => _services.Session;
     public SettingsStore Settings => _services.Settings;
+    public ShiftStore Day => _services.ShiftState;
+    public ShiftService ShiftApi => _services.Shifts;
+    public DayService DayApi => _services.Days;
+
+    public Task<LoginResponse> AuthenticateAsync(string username, string password)
+        => _services.Auth.LoginAsync(username, password);
     public string DateShort => DateTime.Now.ToString("ddd, MMM d");
 
     [ObservableProperty]
@@ -69,6 +74,53 @@ public partial class ShellViewModel : ObservableObject
         IsLoggedIn = true;
         Navigate("Sell");
         _ = LoadStoreNameAsync();
+        _ = LoadSettingsAsync();
+        _ = RefreshShiftAsync();
+    }
+
+    public async Task RefreshShiftAsync()
+    {
+        try
+        {
+            Day.CurrentDay = await _services.Days.GetCurrentAsync();
+            Day.Current = await _services.Shifts.GetCurrentAsync();
+            if (Day.Current is null)
+            {
+                var page = await _services.Shifts.GetShiftsAsync(1, 1);
+                Day.LatestClosed = page.Items.Count > 0
+                    ? await _services.Shifts.GetReadAsync(page.Items[0].Id)
+                    : null;
+            }
+            if (Day.CurrentDay is null)
+            {
+                var days = await _services.Days.GetDaysAsync(1, 1);
+                Day.LatestClosedDay = days.Items.Count > 0
+                    ? await _services.Days.GetReadAsync(days.Items[0].Id)
+                    : null;
+            }
+            else
+            {
+                Day.LatestClosedDay = null;
+            }
+        }
+        catch (ApiException ex)
+        {
+            ShowToast(ex.Message);
+        }
+    }
+
+    private async Task LoadSettingsAsync()
+    {
+        try
+        {
+            var settings = await _services.StoreSettings.GetSettingsAsync();
+            Settings.StoreName = settings.StoreName;
+            Settings.AcceptUtang = settings.AcceptUtang;
+            Settings.TrackEWalletFloat = settings.TrackEWalletFloat;
+        }
+        catch (ApiException)
+        {
+        }
     }
 
     private async Task LoadStoreNameAsync()
@@ -103,6 +155,10 @@ public partial class ShellViewModel : ObservableObject
             "Shift" => Shift,
             _ => Sell,
         };
+        if (name == "Shift" && IsLoggedIn)
+        {
+            _ = RefreshShiftAsync();
+        }
     }
 
     [RelayCommand]

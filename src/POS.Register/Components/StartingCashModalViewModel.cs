@@ -1,28 +1,71 @@
+using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using POS.Register.Lib;
+using POS.Register.Services;
 using AppShell = POS.Register.Shell;
 
 namespace POS.Register.Components;
 
 public partial class StartingCashModalViewModel : ObservableObject, AppShell.IDefaultAction
 {
-    public System.Windows.Input.ICommand DefaultCommand => ConfirmCommand;
-    public System.Windows.Input.ICommand DismissCommand => CancelCommand;
+    public ICommand DefaultCommand => ConfirmCommand;
+    public ICommand DismissCommand => CancelCommand;
 
     private readonly AppShell.ShellViewModel _shell;
 
-    public string AmountDisplay => "2,000";
+    public MoneyEntry Amount { get; } = new();
+    public MoneyEntry EWallet { get; } = new();
+    public int NextNumber { get; }
+    public bool ShowEWallet { get; }
+    public string Body => $"Opens shift #{NextNumber}. Count the drawer before opening.";
+    public string ConfirmText => $"OPEN SHIFT #{NextNumber}";
 
-    public StartingCashModalViewModel(AppShell.ShellViewModel shell) => _shell = shell;
+    [ObservableProperty]
+    private bool isBusy;
+
+    public StartingCashModalViewModel(AppShell.ShellViewModel shell)
+    {
+        _shell = shell;
+        NextNumber = shell.Day.NextNumber;
+        ShowEWallet = shell.Settings.TrackEWalletFloat;
+    }
 
     [RelayCommand]
-    private void Confirm()
+    private void Digit(string key) => Amount.Push(key);
+
+    [RelayCommand]
+    private void Backspace() => Amount.Backspace();
+
+    [RelayCommand]
+    private async Task ConfirmAsync()
     {
-        _shell.Day.IsShiftOpen = true;
-        _shell.Day.IsClosed = false;
-        _shell.CloseModal();
-        _shell.ShowToast("Shift #12 opened with ₱2,000.00 starting cash");
+        if (IsBusy)
+        {
+            return;
+        }
+        if (Amount.Value <= 0m)
+        {
+            _shell.ShowToast("Starting cash must be greater than ₱0.");
+            return;
+        }
+        IsBusy = true;
+        try
+        {
+            await _shell.ShiftApi.OpenAsync(Amount.Value, ShowEWallet ? EWallet.Value : null);
+            await _shell.RefreshShiftAsync();
+            _shell.CloseModal();
+            _shell.ShowToast(
+                $"Shift #{_shell.Day.Current?.Number} opened with {Peso.Format(Amount.Value)} starting cash");
+        }
+        catch (ApiException ex)
+        {
+            _shell.ShowToast(ex.Message);
+        }
+        finally
+        {
+            IsBusy = false;
+        }
     }
 
     [RelayCommand]

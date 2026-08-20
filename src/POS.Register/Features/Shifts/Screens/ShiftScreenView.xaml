@@ -34,11 +34,12 @@
             <ColumnDefinition Width="460" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        <Border Style="{StaticResource Card}" Padding="26" VerticalAlignment="Top"
+        <StackPanel VerticalAlignment="Top">
+        <Border Style="{StaticResource Card}" Padding="26" Margin="0,0,0,16"
                 Visibility="{Binding ShellVm.Day.IsShiftOpen, Converter={StaticResource BoolToVis}}">
             <StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
-                    <TextBlock Style="{StaticResource TitleSection}" FontSize="24" FontWeight="Bold" Text="Shift #12" VerticalAlignment="Center" />
+                    <TextBlock Style="{StaticResource TitleSection}" FontSize="24" FontWeight="Bold" Text="{Binding OpenTitle}" VerticalAlignment="Center" />
                     <Border Style="{StaticResource Pill}" Background="{StaticResource ConfirmSoft}"
                             BorderBrush="{StaticResource Confirm}" Margin="12,0,0,0">
                         <TextBlock Style="{StaticResource PillText}" Foreground="{StaticResource Confirm}" Text="OPEN" />
@@ -77,7 +78,17 @@
                 <ItemsControl ItemsSource="{Binding Movements}" Margin="0,0,0,16">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Border Background="{StaticResource Surface2}" CornerRadius="8" Padding="12,9" Margin="0,0,0,6">
+                            <Border CornerRadius="8" Padding="12,9" Margin="0,0,0,6">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Background" Value="{StaticResource Surface2}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsVoided}" Value="True">
+                                                <Setter Property="Opacity" Value="0.55" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
                                 <DockPanel>
                                     <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right">
                                         <TextBlock Text="{Binding AmountDisplay}" FontFamily="{StaticResource FontDisplay}" FontWeight="SemiBold">
@@ -88,33 +99,39 @@
                                                         <DataTrigger Binding="{Binding IsPayout}" Value="True">
                                                             <Setter Property="Foreground" Value="{StaticResource Red}" />
                                                         </DataTrigger>
+                                                        <DataTrigger Binding="{Binding IsVoided}" Value="True">
+                                                            <Setter Property="Foreground" Value="{StaticResource Ink3}" />
+                                                            <Setter Property="TextDecorations" Value="Strikethrough" />
+                                                        </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
                                             </TextBlock.Style>
                                         </TextBlock>
                                         <TextBlock Style="{StaticResource BodyText}" FontSize="12" FontWeight="SemiBold"
-                                                   Foreground="{StaticResource Red}" Text="Void" Margin="12,0,0,0" VerticalAlignment="Center" />
+                                                   Foreground="{StaticResource Red}" Text="Void" Margin="12,0,0,0" VerticalAlignment="Center"
+                                                   Visibility="{Binding IsVoided, Converter={StaticResource InverseBoolToVis}}" />
                                     </StackPanel>
-                                    <TextBlock Style="{StaticResource BodyText}" FontSize="14" Text="{Binding Note}" VerticalAlignment="Center" />
+                                    <TextBlock FontSize="14" Text="{Binding Note}" VerticalAlignment="Center">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock" BasedOn="{StaticResource BodyText}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsVoided}" Value="True">
+                                                        <Setter Property="TextDecorations" Value="Strikethrough" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
                                 </DockPanel>
                             </Border>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="10" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Button Style="{StaticResource BtnGhost}" Content="X READ" MinHeight="52" FontWeight="Bold"
-                            Foreground="{StaticResource Ink2}" Command="{Binding XReadCommand}" />
-                    <Button Grid.Column="2" Style="{StaticResource BtnDangerSolid}" Content="CLOSE SHIFT (Z READ)" MinHeight="52"
-                            Command="{Binding OpenZReadCommand}" />
-                </Grid>
+                <Button Style="{StaticResource BtnDangerSolid}" Content="END SHIFT (X READ)" MinHeight="52"
+                        Command="{Binding EndShiftCommand}" />
             </StackPanel>
         </Border>
-        <Border Padding="26" VerticalAlignment="Top">
+        <Border Padding="26" Margin="0,0,0,16">
             <Border.Style>
                 <Style TargetType="Border" BasedOn="{StaticResource Card}">
                     <Setter Property="Visibility" Value="Collapsed" />
@@ -127,50 +144,58 @@
             </Border.Style>
             <StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,14">
-                    <TextBlock VerticalAlignment="Center">
-                        <TextBlock.Style>
-                            <Style TargetType="TextBlock" BasedOn="{StaticResource TitleSection}">
-                                <Setter Property="Text" Value="Shift #11" />
-                                <Setter Property="FontSize" Value="24" />
-                                <Setter Property="FontWeight" Value="Bold" />
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding ShellVm.Day.IsClosed}" Value="True">
-                                        <Setter Property="Text" Value="Shift #12" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </TextBlock.Style>
-                    </TextBlock>
+                    <TextBlock Style="{StaticResource TitleSection}" FontSize="24" FontWeight="Bold"
+                               Text="{Binding ClosedTitle}" VerticalAlignment="Center" />
                     <Border Style="{StaticResource Pill}" Background="{StaticResource RedSoft}"
                             BorderBrush="{StaticResource Red}" Margin="12,0,0,0">
+                        <TextBlock Style="{StaticResource PillText}" Foreground="{StaticResource Red}" Text="ENDED" />
+                    </Border>
+                </StackPanel>
+                <TextBlock Style="{StaticResource BodyText}" Foreground="{StaticResource Ink2}"
+                           TextWrapping="Wrap" Text="{Binding ClosedSub}" Margin="0,0,0,10" />
+                <TextBlock Style="{StaticResource BodyText}" FontSize="12" Foreground="{StaticResource Ink3}"
+                           Text="A mistaken X read can only be corrected by an Admin (logged)." Margin="0,0,0,16" />
+                <TextBlock Style="{StaticResource BodyText}" FontSize="13" Foreground="{StaticResource Red}"
+                           TextWrapping="Wrap" Text="{Binding StoreClosedNote}"
+                           Visibility="{Binding IsStoreClosedToday, Converter={StaticResource BoolToVis}}" />
+                <Button Style="{StaticResource BtnPrimary}" FontSize="14" MinHeight="56"
+                        Content="{Binding OpenButtonText}"
+                        Command="{Binding OpenStartingCashCommand}"
+                        Visibility="{Binding CanOpenShift, Converter={StaticResource BoolToVis}}" />
+            </StackPanel>
+        </Border>
+        <Border Style="{StaticResource Card}" Padding="26">
+            <StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                    <TextBlock Style="{StaticResource TitleSection}" FontSize="24" FontWeight="Bold"
+                               Text="{Binding DayTitle}" VerticalAlignment="Center" />
+                    <Border Style="{StaticResource Pill}" Background="{StaticResource ConfirmSoft}"
+                            BorderBrush="{StaticResource Confirm}" Margin="12,0,0,0"
+                            Visibility="{Binding IsDayOpen, Converter={StaticResource BoolToVis}}">
+                        <TextBlock Style="{StaticResource PillText}" Foreground="{StaticResource Confirm}" Text="OPEN" />
+                    </Border>
+                    <Border Style="{StaticResource Pill}" Background="{StaticResource RedSoft}"
+                            BorderBrush="{StaticResource Red}" Margin="12,0,0,0"
+                            Visibility="{Binding HasClosedDay, Converter={StaticResource BoolToVis}}">
                         <TextBlock Style="{StaticResource PillText}" Foreground="{StaticResource Red}" Text="CLOSED" />
                     </Border>
                     <Border Style="{StaticResource Pill}" Background="{StaticResource GoldSoft}"
                             BorderBrush="{StaticResource Gold}" Margin="8,0,0,0"
-                            Visibility="{Binding ShellVm.Day.ClosedLate, Converter={StaticResource BoolToVis}}">
+                            Visibility="{Binding DayClosedLate, Converter={StaticResource BoolToVis}}">
                         <TextBlock Style="{StaticResource PillText}" Foreground="{StaticResource Gold}" Text="LATE" />
                     </Border>
                 </StackPanel>
-                <TextBlock TextWrapping="Wrap" Margin="0,0,0,10">
-                    <TextBlock.Style>
-                        <Style TargetType="TextBlock" BasedOn="{StaticResource BodyText}">
-                            <Setter Property="Text" Value="No transactions yet." />
-                            <Setter Property="Foreground" Value="{StaticResource Ink2}" />
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding ShellVm.Day.IsClosed}" Value="True">
-                                    <Setter Property="Text" Value="{Binding ClosedSub}" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </TextBlock.Style>
-                </TextBlock>
+                <TextBlock Style="{StaticResource BodyText}" Foreground="{StaticResource Ink2}"
+                           TextWrapping="Wrap" Text="{Binding DaySub}" Margin="0,0,0,12" />
                 <TextBlock Style="{StaticResource BodyText}" FontSize="12" Foreground="{StaticResource Ink3}"
-                           Text="A mistaken Z read can only be corrected by an Admin (logged)." Margin="0,0,0,16" />
-                <Button Style="{StaticResource BtnPrimary}" FontSize="14" MinHeight="56"
-                        Content="DECLARE STARTING CASH — OPEN SHIFT #12"
-                        Command="{Binding OpenStartingCashCommand}" />
+                           Text="End the shift first — the Z read closes the whole day." Margin="0,0,0,12"
+                           Visibility="{Binding ShowCloseDayHint, Converter={StaticResource BoolToVis}}" />
+                <Button Style="{StaticResource BtnDangerSolid}" Content="CLOSE DAY (Z READ)" MinHeight="52"
+                        Command="{Binding CloseDayCommand}" IsEnabled="{Binding CanCloseDay}"
+                        Visibility="{Binding IsDayOpen, Converter={StaticResource BoolToVis}}" />
             </StackPanel>
         </Border>
+        </StackPanel>
         <Border Grid.Column="2" Style="{StaticResource Card}" Padding="32,28" VerticalAlignment="Top">
             <StackPanel>
                 <StackPanel Margin="0,0,0,14">
@@ -215,6 +240,9 @@
                                                         <DataTrigger Binding="{Binding Tone}" Value="Confirm">
                                                             <Setter Property="Foreground" Value="{StaticResource Confirm}" />
                                                         </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Tone}" Value="Gold">
+                                                            <Setter Property="Foreground" Value="{StaticResource Gold}" />
+                                                        </DataTrigger>
                                                         <DataTrigger Binding="{Binding Bold}" Value="True">
                                                             <Setter Property="FontWeight" Value="Bold" />
                                                         </DataTrigger>
@@ -233,6 +261,9 @@
                                                         </DataTrigger>
                                                         <DataTrigger Binding="{Binding Tone}" Value="Confirm">
                                                             <Setter Property="Foreground" Value="{StaticResource Confirm}" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Tone}" Value="Gold">
+                                                            <Setter Property="Foreground" Value="{StaticResource Gold}" />
                                                         </DataTrigger>
                                                         <DataTrigger Binding="{Binding Bold}" Value="True">
                                                             <Setter Property="FontWeight" Value="Bold" />
