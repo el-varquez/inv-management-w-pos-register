@@ -7,4 +7,10 @@ public partial class SettingsStore : ObservableObject
 {
     [ObservableProperty]
     private string storeName = CannedDay.StoreName;
+
+    [ObservableProperty]
+    private bool acceptUtang = true;
+
+    [ObservableProperty]
+    private bool trackEWalletFloat;
 }

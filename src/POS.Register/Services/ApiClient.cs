@@ -29,16 +29,38 @@ public class ApiClient
         };
     }
 
-    public Task<T> GetAsync<T>(string path) => SendAsync<T>(HttpMethod.Get, path, null);
+    public async Task<T> GetAsync<T>(string path)
+        => Deserialize<T>(await SendRawAsync(HttpMethod.Get, path, null));
 
-    public Task<T> PostAsync<T>(string path, object body) => SendAsync<T>(HttpMethod.Post, path, body);
+    public async Task<T?> GetOptionalAsync<T>(string path) where T : class
+    {
+        var payload = await SendRawAsync(HttpMethod.Get, path, null);
+        return string.IsNullOrWhiteSpace(payload) || payload == "null"
+            ? null
+            : JsonSerializer.Deserialize<T>(payload, Json);
+    }
 
-    private async Task<T> SendAsync<T>(HttpMethod method, string path, object? body)
+    public async Task<T> PostAsync<T>(string path, object body)
+        => Deserialize<T>(await SendRawAsync(HttpMethod.Post, path, body));
+
+    public async Task PostAsync(string path, object? body = null)
+        => await SendRawAsync(HttpMethod.Post, path, body);
+
+    public async Task PostAsync(string path, object? body, string bearerToken)
+        => await SendRawAsync(HttpMethod.Post, path, body, bearerToken);
+
+    private static T Deserialize<T>(string payload)
+        => JsonSerializer.Deserialize<T>(payload, Json)
+            ?? throw new ApiException("Empty response from the store service.", 200);
+
+    private async Task<string> SendRawAsync(
+        HttpMethod method, string path, object? body, string? bearerToken = null)
     {
         using var request = new HttpRequestMessage(method, path);
-        if (_session.Token is not null)
+        var token = bearerToken ?? _session.Token;
+        if (token is not null)
         {
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _session.Token);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
         }
         if (body is not null)
         {
@@ -62,14 +84,13 @@ public class ApiClient
             var statusCode = (int)response.StatusCode;
             if (!response.IsSuccessStatusCode)
             {
-                if (statusCode == 401)
+                if (statusCode == 401 && bearerToken is null && _session.Token is not null)
                 {
                     SessionExpired?.Invoke();
                 }
                 throw new ApiException(ReadError(payload, statusCode), statusCode);
             }
-            return JsonSerializer.Deserialize<T>(payload, Json)
-                ?? throw new ApiException("Empty response from the store service.", statusCode);
+            return payload;
         }
     }
 
