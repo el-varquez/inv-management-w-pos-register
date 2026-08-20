@@ -10,6 +10,7 @@ public static class ShiftReceipt
         var rows = new List<ReceiptRow>
         {
             new($"Sales ({read.TransactionCount} paid txns)", Peso.Format(read.NetSales)),
+            new($"Refunds ({read.RefundCount}) — excluded", Peso.Format(read.Refunds), Tone: "Red"),
             new("Net sales (paid)", Peso.Format(read.NetSales), Bold: true, TopBorder: true),
             new("BY PAYMENT", IsHead: true),
             new("Cash", Peso.Format(read.CashSales)),

@@ -348,7 +348,7 @@ public partial class SellScreenViewModel : ObservableObject
         ShellVm.OpenModal(new SharedComp.AdminOverrideModalViewModel(
             ShellVm,
             $"Void line: {line.Name} ({line.Qty}×)",
-            () =>
+            _ =>
             {
                 ShellVm.Cart.Remove(line);
                 SelectedIndex = Lines.Count == 0 ? -1 : Math.Min(SelectedIndex, Lines.Count - 1);
