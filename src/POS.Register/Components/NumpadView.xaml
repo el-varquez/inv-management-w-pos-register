@@ -5,11 +5,13 @@
         <UniformGrid.Resources>
             <Style TargetType="Button" BasedOn="{StaticResource BtnKey}">
                 <Setter Property="Margin" Value="4" />
+                <Setter Property="Command" Value="{Binding DigitCommand}" />
             </Style>
         </UniformGrid.Resources>
-        <Button Content="1" /><Button Content="2" /><Button Content="3" />
-        <Button Content="4" /><Button Content="5" /><Button Content="6" />
-        <Button Content="7" /><Button Content="8" /><Button Content="9" />
-        <Button Content="00" /><Button Content="0" /><Button Content="&#x232B;" />
+        <Button Content="1" CommandParameter="1" /><Button Content="2" CommandParameter="2" /><Button Content="3" CommandParameter="3" />
+        <Button Content="4" CommandParameter="4" /><Button Content="5" CommandParameter="5" /><Button Content="6" CommandParameter="6" />
+        <Button Content="7" CommandParameter="7" /><Button Content="8" CommandParameter="8" /><Button Content="9" CommandParameter="9" />
+        <Button Content="00" CommandParameter="00" /><Button Content="0" CommandParameter="0" />
+        <Button Content="&#x232B;" Command="{Binding BackspaceCommand}" />
     </UniformGrid>
 </UserControl>

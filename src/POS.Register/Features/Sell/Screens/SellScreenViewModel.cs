@@ -23,8 +23,11 @@ public partial class SellScreenViewModel : ObservableObject
     public string DiscountDisplay => Peso.Format(CannedDay.Discount);
     public string TotalDisplay => Peso.Format(CannedDay.CartTotal);
     public string HotkeyHint => CannedDay.HotkeyHint;
-    public string LockedTitle => CannedDay.LockedTitle;
-    public string LockedBody => CannedDay.LockedBody;
+    public string LockedTitle => ShellVm.Day.IsStoreClosedToday ? "Store closed for today" : CannedDay.LockedTitle;
+    public string LockedBody => ShellVm.Day.IsStoreClosedToday
+        ? $"Day #{ShellVm.Day.LatestClosedDay?.Number}'s Z read is done — the register opens again after midnight."
+        : $"No starting cash, no transactions. Declare the drawer's starting cash to open shift #{ShellVm.Day.NextNumber}.";
+    public bool CanOpenShift => !ShellVm.Day.IsStoreClosedToday;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ShowResults))]
@@ -38,7 +41,16 @@ public partial class SellScreenViewModel : ObservableObject
 
     public bool ShowResults => ScanText.Length > 0;
 
-    public SellScreenViewModel(AppShell.ShellViewModel shell) => ShellVm = shell;
+    public SellScreenViewModel(AppShell.ShellViewModel shell)
+    {
+        ShellVm = shell;
+        ShellVm.Day.PropertyChanged += (_, _) =>
+        {
+            OnPropertyChanged(nameof(LockedTitle));
+            OnPropertyChanged(nameof(LockedBody));
+            OnPropertyChanged(nameof(CanOpenShift));
+        };
+    }
 
     public void RequestScanFocus() => ScanFocusRequested?.Invoke();
 
@@ -63,7 +75,15 @@ public partial class SellScreenViewModel : ObservableObject
     private void OpenDiscount() => ShellVm.OpenModal(new SellComp.DiscountModalViewModel(ShellVm));
 
     [RelayCommand]
-    private void OpenStartingCash() => ShellVm.OpenModal(new SharedComp.StartingCashModalViewModel(ShellVm));
+    private void OpenStartingCash()
+    {
+        if (ShellVm.Day.IsStoreClosedToday)
+        {
+            ShellVm.ShowToast(LockedBody);
+            return;
+        }
+        ShellVm.OpenModal(new SharedComp.StartingCashModalViewModel(ShellVm));
+    }
 
     [RelayCommand]
     private void SelectNext()

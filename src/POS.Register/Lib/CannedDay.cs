@@ -19,14 +19,9 @@ public record SaleLine(string Name, int Qty, decimal Price)
     public decimal Total => Qty * Price;
 }
 
-public record Movement(string Note, decimal Amount, bool IsPayout)
+public record Movement(string Note, decimal Amount, bool IsPayout, bool IsVoided = false)
 {
     public string AmountDisplay => Peso.Signed(Amount);
-}
-
-public record DenominationCount(string Label, int Count, decimal Value)
-{
-    public decimal Total => Count * Value;
 }
 
 public record ReceiptRow(string Label, string Value = "", bool IsHead = false, string Tone = "Ink", bool Bold = false, bool TopBorder = false);
@@ -34,24 +29,8 @@ public record ReceiptRow(string Label, string Value = "", bool IsHead = false, s
 public static class CannedDay
 {
     public const string StoreName = "Aling Nena's Store";
-    public const string CashierName = "Marites";
-    public const int ShiftNumber = 12;
-    public const int PreviousShiftNumber = 11;
-    public const int NextShiftNumber = 13;
-    public const string OpenedAt = "7:02 AM";
-    public const decimal StartingCash = 2000m;
-    public const decimal NetSales = 5160m;
-    public const decimal ExpectedCash = 6230m;
-    public const decimal CountedCash = 6215m;
-
-    public const string OpenChip = "Shift #12 · Open 7:02 AM";
-    public const string FreshChip = "CLOSED · SHIFT #11";
-    public const string ClosedChip = "CLOSED · SHIFT #12";
 
     public const string LockedTitle = "No starting cash declared";
-    public const string LockedBody = "No starting cash, no transactions. Declare the drawer's starting cash to open shift #12.";
-
-    public const string ClosedSub = "Closed with ₱6,215.00 counted · short by ₱15.00 · Expected ₱6,230.00";
 
     public static readonly IReadOnlyList<CartLine> Cart =
     [
@@ -121,56 +100,4 @@ public static class CannedDay
         new("Eggs per pc", 5, 12m),
     ];
 
-    public static readonly IReadOnlyList<Movement> Movements =
-    [
-        new("Rema drinks delivery", -1000m, true),
-        new("Change fund from owner", 500m, false),
-    ];
-
-    public const string PayoutExpectedAfter = "₱5,230.00";
-    public const string PayInExpectedAfter = "₱6,730.00";
-    public const string MovementAmount = "1,000";
-    public const string MovementNote = "Rema drinks delivery";
-
-    public static readonly IReadOnlyList<DenominationCount> Denominations =
-    [
-        new("₱1000", 5, 1000m),
-        new("₱500", 2, 500m),
-        new("₱200", 0, 200m),
-        new("₱100", 1, 100m),
-        new("₱50", 1, 50m),
-        new("₱20", 3, 20m),
-        new("Coins", 1, 5m),
-    ];
-
-    public const string ZVerdict = "SHORT by ₱15.00";
-
-    public const string XReadTitle = "X READ — SHIFT #12";
-    public const string XReadCaption = "Mid-shift · live preview";
-    public const string ZReadTitle = "Z READ #12 — SHIFT #12";
-    public const string ZReadCaption = "Closeout report · final";
-
-    private static readonly IReadOnlyList<ReceiptRow> SharedRows =
-    [
-        new("Sales (14 paid txns)", "₱5,160.00"),
-        new("Refunds (1) — excluded", "₱65.00", Tone: "Red"),
-        new("Net sales (paid)", "₱5,160.00", Bold: true, TopBorder: true),
-        new("BY PAYMENT", IsHead: true),
-        new("Cash", "₱4,730.00"),
-        new("GCash", "₱250.00"),
-        new("Maya", "₱180.00"),
-        new("DRAWER", IsHead: true),
-        new("Starting cash", "₱2,000.00"),
-        new("Payouts / pay-ins", "-₱500.00", Tone: "Red"),
-        new("Expected cash in drawer", "₱6,230.00", Bold: true, TopBorder: true),
-    ];
-
-    public static readonly IReadOnlyList<ReceiptRow> XReceiptRows = SharedRows;
-
-    public static readonly IReadOnlyList<ReceiptRow> ZReceiptRows =
-    [
-        .. SharedRows,
-        new("Counted cash", "₱6,215.00"),
-        new("Short", "₱15.00", Tone: "Red", Bold: true),
-    ];
 }
