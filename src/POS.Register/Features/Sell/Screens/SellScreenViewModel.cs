@@ -46,6 +46,7 @@ public partial class SellScreenViewModel : ObservableObject
         ? $"Day #{ShellVm.Day.LatestClosedDay?.Number}'s Z read is done — the register opens again after midnight."
         : $"No starting cash, no transactions. Declare the drawer's starting cash to open shift #{ShellVm.Day.NextNumber}.";
     public bool CanOpenShift => !ShellVm.Day.IsStoreClosedToday;
+    public bool ShowEWallet => ShellVm.Settings.TrackEWalletFloat;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasQuery))]
@@ -69,6 +70,7 @@ public partial class SellScreenViewModel : ObservableObject
             _searchTimer.Stop();
             _ = RunSearchAsync(ScanText.Trim());
         };
+        ShellVm.Settings.PropertyChanged += (_, _) => OnPropertyChanged(nameof(ShowEWallet));
         ShellVm.Day.PropertyChanged += (_, _) =>
         {
             OnPropertyChanged(nameof(LockedTitle));
@@ -358,4 +360,14 @@ public partial class SellScreenViewModel : ObservableObject
 
     [RelayCommand]
     private void Utang() => ShellVm.ShowToast("Utang is OFF — collection-only");
+
+    [RelayCommand]
+    private void EWallet()
+    {
+        if (!ShellVm.Day.IsShiftOpen)
+        {
+            return;
+        }
+        ShellVm.OpenModal(new SellComp.EWalletModalViewModel(ShellVm));
+    }
 }

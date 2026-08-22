@@ -16,9 +16,18 @@ public static class ShiftReceipt
             new("Cash", Peso.Format(read.CashSales)),
             new("GCash", Peso.Format(read.GcashSales)),
             new("Maya", Peso.Format(read.MayaSales)),
-            new("DRAWER", IsHead: true),
-            new("Starting cash", Peso.Format(read.StartingCash)),
         };
+        if (read.EWalletCashInCount > 0 || read.EWalletCashOutCount > 0)
+        {
+            rows.Add(new("E-WALLET — NOT SALES", IsHead: true));
+            rows.Add(new($"Cash in ({read.EWalletCashInCount}) — sent from wallet",
+                Peso.Format(read.EWalletCashIn)));
+            rows.Add(new($"Cash out ({read.EWalletCashOutCount}) — received to wallet",
+                Peso.Format(read.EWalletCashOut)));
+            rows.Add(new("Fees earned are counted in sales above", Tone: "Ink3"));
+        }
+        rows.Add(new("DRAWER", IsHead: true));
+        rows.Add(new("Starting cash", Peso.Format(read.StartingCash)));
         if (read.DrawerMovementsNet != 0m)
         {
             rows.Add(new("Payouts / pay-ins",

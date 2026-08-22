@@ -26,4 +26,8 @@ public class ShiftService
 
     public Task RecordMovementAsync(decimal amount, string note)
         => _api.PostAsync("shifts/movements", new { Amount = amount, Note = note });
+
+    public Task RecordEWalletAsync(string direction, decimal principal, decimal fee)
+        => _api.PostAsync("shifts/ewallet",
+            new { Direction = direction, Principal = principal, Fee = fee });
 }

@@ -63,6 +63,13 @@
         <Setter Property="Foreground" Value="{StaticResource Red}" />
     </Style>
 
+    <Style x:Key="BtnOutlineGreen" TargetType="Button" BasedOn="{StaticResource BtnBase}">
+        <Setter Property="Background" Value="{StaticResource GreenSoft}" />
+        <Setter Property="BorderBrush" Value="{StaticResource Green}" />
+        <Setter Property="Foreground" Value="{StaticResource Green}" />
+        <Setter Property="FontWeight" Value="Bold" />
+    </Style>
+
     <Style x:Key="BtnDangerSolid" TargetType="Button" BasedOn="{StaticResource BtnBase}">
         <Setter Property="Background" Value="{StaticResource Red}" />
         <Setter Property="BorderBrush" Value="{StaticResource Red}" />
