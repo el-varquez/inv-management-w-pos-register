@@ -4,6 +4,7 @@
              xmlns:lib="clr-namespace:POS.Register.Lib">
     <UserControl.Resources>
         <lib:StringEqualsToBoolConverter x:Key="ActiveNav" />
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
         <Style x:Key="RailItem" TargetType="RadioButton">
             <Setter Property="GroupName" Value="Rail" />
             <Setter Property="FontFamily" Value="{StaticResource FontUI}" />
@@ -54,6 +55,10 @@
                 <RadioButton Style="{StaticResource RailItem}" Tag="&#x1F9FE;" Content="SALES"
                              IsChecked="{Binding ActiveScreenName, Mode=OneWay, Converter={StaticResource ActiveNav}, ConverterParameter=Sales}"
                              Command="{Binding NavigateCommand}" CommandParameter="Sales" HorizontalAlignment="Center" />
+                <RadioButton Style="{StaticResource RailItem}" Tag="&#x1F4D2;" Content="UTANG"
+                             IsChecked="{Binding ActiveScreenName, Mode=OneWay, Converter={StaticResource ActiveNav}, ConverterParameter=Utang}"
+                             Command="{Binding NavigateCommand}" CommandParameter="Utang" HorizontalAlignment="Center"
+                             Visibility="{Binding ShowUtangRail, Converter={StaticResource BoolToVis}}" />
                 <RadioButton Style="{StaticResource RailItem}" Tag="&#x1F4B5;" Content="SHIFT"
                              IsChecked="{Binding ActiveScreenName, Mode=OneWay, Converter={StaticResource ActiveNav}, ConverterParameter=Shift}"
                              Command="{Binding NavigateCommand}" CommandParameter="Shift" HorizontalAlignment="Center" />

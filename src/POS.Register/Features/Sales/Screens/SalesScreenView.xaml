@@ -77,7 +77,16 @@
                                         <TextBlock Style="{StaticResource BodyText}" FontWeight="Bold" Text="{Binding Receipt}" />
                                         <TextBlock Grid.Column="1" Style="{StaticResource BodyText}" Foreground="{StaticResource Ink2}" Text="{Binding Time}" />
                                         <TextBlock Grid.Column="2" Style="{StaticResource BodyText}" Foreground="{StaticResource Ink2}" Text="{Binding Items}" />
-                                        <TextBlock Grid.Column="3" Style="{StaticResource BodyText}" FontWeight="SemiBold" Text="{Binding Payment}" />
+                                        <StackPanel Grid.Column="3" Orientation="Horizontal">
+                                            <TextBlock Style="{StaticResource BodyText}" FontWeight="SemiBold" Text="{Binding Payment}"
+                                                       Visibility="{Binding IsUtang, Converter={StaticResource InverseBoolToVis}}" />
+                                            <Border Background="{StaticResource GoldSoft}" BorderBrush="{StaticResource Gold}"
+                                                    BorderThickness="1" CornerRadius="11" Padding="10,3" VerticalAlignment="Center"
+                                                    Visibility="{Binding IsUtang, Converter={StaticResource BoolToVis}}">
+                                                <TextBlock Style="{StaticResource BodyText}" FontSize="12" FontWeight="Bold"
+                                                           Foreground="{StaticResource Gold}" Text="{Binding Payment}" />
+                                            </Border>
+                                        </StackPanel>
                                         <TextBlock Grid.Column="4" Style="{StaticResource TitleSection}" FontSize="15"
                                                    Text="{Binding Amount, StringFormat=₱{0:N2}}" HorizontalAlignment="Right" />
                                         <Border Grid.Column="5" CornerRadius="11" Padding="10,3" HorizontalAlignment="Right" VerticalAlignment="Center">
