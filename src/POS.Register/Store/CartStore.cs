@@ -28,7 +28,7 @@ public partial class CartStore : ObservableObject
     public int ItemCount => Lines.Sum(l => l.Qty);
     public bool IsEmpty => Lines.Count == 0;
 
-    public CartAddResult TryAdd(Guid itemId, string itemCode, string? barcode, string name, decimal price, int stock, bool tracksStock, bool isComposite)
+    public CartAddResult TryAdd(Guid itemId, string itemCode, string? barcode, string name, decimal price, decimal? utangMarkup, int stock, bool tracksStock, bool isComposite)
     {
         var cap = tracksStock || isComposite ? stock : int.MaxValue;
         var line = Lines.FirstOrDefault(l => l.ItemId == itemId);
@@ -38,7 +38,7 @@ public partial class CartStore : ObservableObject
             {
                 return CartAddResult.OutOfStock;
             }
-            line = new CartLine(itemId, itemCode, barcode ?? "", name, price, cap, 1);
+            line = new CartLine(itemId, itemCode, barcode ?? "", name, price, utangMarkup, cap, 1);
             line.PropertyChanged += (_, _) => RaiseTotals();
             Lines.Add(line);
         }
@@ -57,11 +57,11 @@ public partial class CartStore : ObservableObject
 
     public CartAddResult TryAdd(SellableItemDto item)
         => TryAdd(item.Id, item.ItemCode, item.Barcode, item.Name, item.Price,
-            item.Stock, item.TracksStock, item.IsComposite);
+            item.UtangMarkup, item.Stock, item.TracksStock, item.IsComposite);
 
     public CartAddResult TryAdd(PopularItemDto item)
         => TryAdd(item.Id, item.ItemCode, item.Barcode, item.Name, item.Price,
-            item.Stock, item.TracksStock, item.IsComposite);
+            item.UtangMarkup, item.Stock, item.TracksStock, item.IsComposite);
 
     public bool TrySetQty(CartLine line, int qty)
     {

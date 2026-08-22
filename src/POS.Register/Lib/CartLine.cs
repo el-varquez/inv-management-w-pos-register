@@ -9,6 +9,7 @@ public partial class CartLine : ObservableObject
     public string Barcode { get; }
     public string Name { get; }
     public decimal Price { get; }
+    public decimal? UtangMarkup { get; }
     public int Cap { get; }
 
     [ObservableProperty]
@@ -17,13 +18,14 @@ public partial class CartLine : ObservableObject
 
     public decimal Total => Qty * Price;
 
-    public CartLine(Guid itemId, string code, string barcode, string name, decimal price, int cap, int qty)
+    public CartLine(Guid itemId, string code, string barcode, string name, decimal price, decimal? utangMarkup, int cap, int qty)
     {
         ItemId = itemId;
         Code = code;
         Barcode = barcode;
         Name = name;
         Price = price;
+        UtangMarkup = utangMarkup;
         Cap = cap;
         Qty = qty;
     }

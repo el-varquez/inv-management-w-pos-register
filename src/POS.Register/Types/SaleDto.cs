@@ -11,5 +11,6 @@ public record SaleDto(
     decimal Change,
     bool IsRefunded,
     Guid? RefundedFromId,
+    Guid? SukiId,
     int ItemCount,
     DateTime CreatedAt);

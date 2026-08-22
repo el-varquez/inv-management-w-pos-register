@@ -6,6 +6,7 @@ public record PopularItemDto(
     string? Barcode,
     string ItemCode,
     decimal Price,
+    decimal? UtangMarkup,
     int Stock,
     bool IsComposite,
     bool TracksStock,

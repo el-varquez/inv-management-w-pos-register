@@ -49,6 +49,9 @@ public class ApiClient
     public async Task PostAsync(string path, object? body, string bearerToken)
         => await SendRawAsync(HttpMethod.Post, path, body, bearerToken);
 
+    public async Task PutAsync(string path, object? body, string bearerToken)
+        => await SendRawAsync(HttpMethod.Put, path, body, bearerToken);
+
     private static T Deserialize<T>(string payload)
         => JsonSerializer.Deserialize<T>(payload, Json)
             ?? throw new ApiException("Empty response from the store service.", 200);

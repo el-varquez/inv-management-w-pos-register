@@ -12,5 +12,8 @@ public partial class SettingsStore : ObservableObject
     private bool acceptUtang = true;
 
     [ObservableProperty]
+    private decimal defaultUtangMarkup;
+
+    [ObservableProperty]
     private bool trackEWalletFloat;
 }
