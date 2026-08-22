@@ -243,6 +243,9 @@
                                                         <DataTrigger Binding="{Binding Tone}" Value="Gold">
                                                             <Setter Property="Foreground" Value="{StaticResource Gold}" />
                                                         </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Tone}" Value="Ink3">
+                                                            <Setter Property="Foreground" Value="{StaticResource Ink3}" />
+                                                        </DataTrigger>
                                                         <DataTrigger Binding="{Binding Bold}" Value="True">
                                                             <Setter Property="FontWeight" Value="Bold" />
                                                         </DataTrigger>
@@ -264,6 +267,9 @@
                                                         </DataTrigger>
                                                         <DataTrigger Binding="{Binding Tone}" Value="Gold">
                                                             <Setter Property="Foreground" Value="{StaticResource Gold}" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Tone}" Value="Ink3">
+                                                            <Setter Property="Foreground" Value="{StaticResource Ink3}" />
                                                         </DataTrigger>
                                                         <DataTrigger Binding="{Binding Bold}" Value="True">
                                                             <Setter Property="FontWeight" Value="Bold" />
