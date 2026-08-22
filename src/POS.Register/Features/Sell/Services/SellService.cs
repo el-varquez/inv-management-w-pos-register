@@ -20,13 +20,17 @@ public class SellService
         decimal transactionDiscount,
         string paymentType,
         decimal amountTendered,
-        string? referenceNumber)
+        string? referenceNumber,
+        Guid? sukiId = null,
+        decimal downPayment = 0m)
         => _api.PostAsync<CreateSaleResult>("sales", new
         {
             Items = items,
             TransactionDiscount = transactionDiscount,
             PaymentType = paymentType,
             AmountTendered = amountTendered,
-            ReferenceNumber = referenceNumber
+            ReferenceNumber = referenceNumber,
+            SukiId = sukiId,
+            DownPayment = downPayment
         });
 }

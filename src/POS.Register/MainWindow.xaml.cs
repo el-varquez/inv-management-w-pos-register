@@ -49,6 +49,20 @@ public partial class MainWindow : Window
             }
             return;
         }
+        if (e.Key is Key.Down or Key.Up
+            && shell.ActiveModal is Features.Sell.Components.UtangChargeModalViewModel utangModal)
+        {
+            if (e.Key == Key.Down)
+            {
+                utangModal.SelectNextCommand.Execute(null);
+            }
+            else
+            {
+                utangModal.SelectPrevCommand.Execute(null);
+            }
+            e.Handled = true;
+            return;
+        }
         if (e.Key is Key.Enter or Key.Return)
         {
             if (Keyboard.FocusedElement is ButtonBase)

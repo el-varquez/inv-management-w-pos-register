@@ -1,0 +1,190 @@
+<UserControl x:Class="POS.Register.Features.Sell.Components.UtangChargeModalView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:comp="clr-namespace:POS.Register.Components"
+             xmlns:lib="clr-namespace:POS.Register.Lib"
+             xmlns:local="clr-namespace:POS.Register.Features.Sell.Components">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        <lib:InverseBoolToVisibilityConverter x:Key="InverseBoolToVis" />
+    </UserControl.Resources>
+    <Border Style="{StaticResource ModalCard}" Width="560" Padding="26" MaxHeight="960">
+        <StackPanel>
+            <TextBlock Style="{StaticResource TitleSection}" FontSize="22" FontWeight="Bold"
+                       Text="Utang — charge to customer" Margin="0,0,0,12" />
+            <Border Background="{StaticResource Surface2}" CornerRadius="{StaticResource RadiusControl}"
+                    Padding="18,12" Margin="0,0,0,12">
+                <DockPanel>
+                    <TextBlock Style="{StaticResource Caption}" Text="SALE TOTAL" VerticalAlignment="Center" />
+                    <TextBlock DockPanel.Dock="Right" Style="{StaticResource MoneyModal}" FontSize="30"
+                               Text="{Binding TotalDisplay}" HorizontalAlignment="Right" />
+                </DockPanel>
+            </Border>
+            <Grid Margin="0,0,0,12">
+                <TextBox x:Name="SearchBox" Style="{StaticResource InputText}"
+                         Text="{Binding Search, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock Foreground="{StaticResource Ink3}"
+                           Text="Search suki by name or phone…" Margin="14,0"
+                           VerticalAlignment="Center" IsHitTestVisible="False">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock" BasedOn="{StaticResource BodyText}">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Search}" Value="">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </Grid>
+            <ScrollViewer MaxHeight="230" VerticalScrollBarVisibility="Auto" Margin="0,0,0,12">
+                <StackPanel>
+                    <ItemsControl ItemsSource="{Binding Rows}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="{x:Type local:SukiRow}">
+                                <Button Command="{Binding DataContext.PickSukiCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}" Cursor="Hand" Margin="0,0,0,6">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border x:Name="RowBg" Background="{StaticResource Surface}"
+                                                    BorderBrush="{StaticResource Line}" BorderThickness="2"
+                                                    CornerRadius="{StaticResource RadiusControl}" Padding="14,10">
+                                                <DockPanel>
+                                                    <Border DockPanel.Dock="Left" Width="38" Height="38" CornerRadius="19"
+                                                            Background="{StaticResource GoldSoft}" VerticalAlignment="Center">
+                                                        <TextBlock Style="{StaticResource MoneyModal}" FontSize="17"
+                                                                   Foreground="{StaticResource Gold}" Text="{Binding Initial}"
+                                                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                    </Border>
+                                                    <TextBlock x:Name="Balance" DockPanel.Dock="Right" Style="{StaticResource MoneyModal}"
+                                                               FontSize="17" FontWeight="SemiBold" Foreground="{StaticResource Ink}"
+                                                               Text="{Binding BalanceDisplay}" VerticalAlignment="Center" />
+                                                    <StackPanel Margin="12,0" VerticalAlignment="Center">
+                                                        <TextBlock Style="{StaticResource BodyText}" FontWeight="Bold" Text="{Binding Name}" />
+                                                        <TextBlock Style="{StaticResource BodyText}" FontSize="12"
+                                                                   Foreground="{StaticResource Ink3}" Text="{Binding PhoneDisplay}" />
+                                                    </StackPanel>
+                                                </DockPanel>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <DataTrigger Binding="{Binding IsHighlighted}" Value="True">
+                                                    <Setter TargetName="RowBg" Property="BorderBrush" Value="{StaticResource Gold}" />
+                                                    <Setter TargetName="RowBg" Property="Background" Value="{StaticResource GoldSoft}" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                                    <Setter TargetName="RowBg" Property="BorderBrush" Value="{StaticResource Gold}" />
+                                                    <Setter TargetName="RowBg" Property="Background" Value="{StaticResource GoldSoft}" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding IsZeroBalance}" Value="True">
+                                                    <Setter TargetName="Balance" Property="Foreground" Value="{StaticResource Confirm}" />
+                                                </DataTrigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <Grid Visibility="{Binding AddingSuki, Converter={StaticResource InverseBoolToVis}}">
+                        <Rectangle Stroke="{StaticResource LineStrong}" StrokeThickness="2" StrokeDashArray="3 3"
+                                   RadiusX="10" RadiusY="10" SnapsToDevicePixels="True" />
+                        <Button Style="{StaticResource BtnGhost}" BorderThickness="0" Background="Transparent"
+                                Foreground="{StaticResource Gold}" FontWeight="Bold" Content="＋ Add new suki"
+                                MinHeight="46" Command="{Binding ToggleAddSukiCommand}" />
+                    </Grid>
+                    <Grid Visibility="{Binding AddingSuki, Converter={StaticResource BoolToVis}}">
+                        <Rectangle Stroke="{StaticResource Gold}" StrokeThickness="2" StrokeDashArray="3 3"
+                                   RadiusX="10" RadiusY="10" SnapsToDevicePixels="True"
+                                   Fill="{StaticResource Surface2}" />
+                        <StackPanel Margin="12">
+                            <Grid Margin="0,0,0,8">
+                                <TextBox x:Name="NewNameBox" Style="{StaticResource InputText}" MinHeight="40"
+                                         Background="{StaticResource Surface}"
+                                         Text="{Binding NewName, UpdateSourceTrigger=PropertyChanged}" />
+                                <TextBlock Foreground="{StaticResource Ink3}" Text="Full name" Margin="12,0"
+                                           VerticalAlignment="Center" IsHitTestVisible="False">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock" BasedOn="{StaticResource BodyText}">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding NewName}" Value="">
+                                                    <Setter Property="Visibility" Value="Visible" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </Grid>
+                            <Grid Margin="0,0,0,8">
+                                <TextBox Style="{StaticResource InputText}" MinHeight="40"
+                                         Background="{StaticResource Surface}"
+                                         Text="{Binding NewPhone, UpdateSourceTrigger=PropertyChanged}" />
+                                <TextBlock Foreground="{StaticResource Ink3}" Text="Phone (09xx…)" Margin="12,0"
+                                           VerticalAlignment="Center" IsHitTestVisible="False">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock" BasedOn="{StaticResource BodyText}">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding NewPhone}" Value="">
+                                                    <Setter Property="Visibility" Value="Visible" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </Grid>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="8" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Button Style="{StaticResource BtnConfirmSolid}" Content="Save &amp; select" MinHeight="40"
+                                        Command="{Binding SaveSukiCommand}" />
+                                <Button Grid.Column="2" Style="{StaticResource BtnGhost}" Content="Cancel" MinHeight="40"
+                                        Padding="14,0" Command="{Binding ToggleAddSukiCommand}" />
+                            </Grid>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+            </ScrollViewer>
+            <Border BorderBrush="{StaticResource Line}" BorderThickness="0,1,0,0" Padding="0,12,0,0" Margin="0,0,0,12">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="200" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Style="{StaticResource Caption}" Text="DOWN PAYMENT (OPTIONAL)" />
+                        <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                            <TextBlock Style="{StaticResource MoneyModal}" FontSize="30" Text="₱" Margin="0,0,4,0"
+                                       VerticalAlignment="Center" />
+                            <TextBox BorderThickness="0" Background="Transparent" TextAlignment="Left"
+                                     FontFamily="{StaticResource FontDisplay}" FontSize="30" FontWeight="Bold"
+                                     Foreground="{StaticResource Ink}" VerticalAlignment="Center" MinWidth="90" MaxLength="7"
+                                     Text="{Binding Down.Digits, UpdateSourceTrigger=PropertyChanged}"
+                                     PreviewTextInput="OnDownTextInput" />
+                        </StackPanel>
+                        <TextBlock Style="{StaticResource BodyText}" FontSize="12" Foreground="{StaticResource Ink3}"
+                                   Text="Cash received now — goes into the drawer as a collection."
+                                   TextWrapping="Wrap" Margin="0,4,0,0" />
+                    </StackPanel>
+                    <comp:NumpadView Grid.Column="2" />
+                </Grid>
+            </Border>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="10" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Button Style="{StaticResource BtnGhost}" Content="Cancel" MinHeight="54" Padding="20,0"
+                        Command="{Binding CancelCommand}" />
+                <Button Grid.Column="2" Style="{StaticResource BtnUtangSolid}" MinHeight="54" FontSize="13"
+                        Content="{Binding CommitLabel}" Command="{Binding CommitCommand}" />
+            </Grid>
+        </StackPanel>
+    </Border>
+</UserControl>

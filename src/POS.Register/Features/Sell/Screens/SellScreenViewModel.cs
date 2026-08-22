@@ -359,7 +359,20 @@ public partial class SellScreenViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void Utang() => ShellVm.ShowToast("Utang is OFF — collection-only");
+    private void Utang()
+    {
+        if (!ShellVm.Settings.AcceptUtang)
+        {
+            ShellVm.ShowToast("Utang is OFF — collection-only");
+            return;
+        }
+        if (ShellVm.Cart.IsEmpty || !ShellVm.Day.IsShiftOpen)
+        {
+            ShellVm.ShowToast("Nothing to charge — ring an item first");
+            return;
+        }
+        ShellVm.OpenModal(new SellComp.UtangChargeModalViewModel(ShellVm));
+    }
 
     [RelayCommand]
     private void EWallet()
