@@ -18,5 +18,6 @@ public record SaleDetailDto(
     decimal AmountTendered,
     decimal Change,
     bool IsRefunded,
+    Guid? SukiId,
     List<SaleLineDto> Lines,
     DateTime CreatedAt);

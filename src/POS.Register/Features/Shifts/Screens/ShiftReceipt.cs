@@ -16,6 +16,10 @@ public static class ShiftReceipt
             new("Cash", Peso.Format(read.CashSales)),
             new("GCash", Peso.Format(read.GcashSales)),
             new("Maya", Peso.Format(read.MayaSales)),
+            new("UTANG — NOT SALES", IsHead: true),
+            new($"Charged on credit ({read.UtangChargedCount})", Peso.Format(read.UtangCharged)),
+            new($"incl. {Peso.Format(read.UtangMarkup)} markup", Tone: "Ink3"),
+            new("Collections (incl. down payments)", Peso.Format(read.UtangCollections)),
         };
         if (read.EWalletCashInCount > 0 || read.EWalletCashOutCount > 0)
         {

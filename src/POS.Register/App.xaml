@@ -9,6 +9,8 @@
              xmlns:sellcomp="clr-namespace:POS.Register.Features.Sell.Components"
              xmlns:salescomp="clr-namespace:POS.Register.Features.Sales.Components"
              xmlns:shiftcomp="clr-namespace:POS.Register.Features.Shifts.Components"
+             xmlns:utang="clr-namespace:POS.Register.Features.Utang.Screens"
+             xmlns:utangcomp="clr-namespace:POS.Register.Features.Utang.Components"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
@@ -29,6 +31,9 @@
             </DataTemplate>
             <DataTemplate DataType="{x:Type shifts:ShiftScreenViewModel}">
                 <shifts:ShiftScreenView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type utang:UtangScreenViewModel}">
+                <utang:UtangScreenView />
             </DataTemplate>
 
             <DataTemplate DataType="{x:Type comp:PaymentModalViewModel}">
@@ -52,8 +57,17 @@
             <DataTemplate DataType="{x:Type sellcomp:QtyModalViewModel}">
                 <sellcomp:QtyModalView />
             </DataTemplate>
+            <DataTemplate DataType="{x:Type sellcomp:UtangChargeModalViewModel}">
+                <sellcomp:UtangChargeModalView />
+            </DataTemplate>
             <DataTemplate DataType="{x:Type salescomp:DetailModalViewModel}">
                 <salescomp:DetailModalView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type utangcomp:CollectModalViewModel}">
+                <utangcomp:CollectModalView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type utangcomp:EditPaymentModalViewModel}">
+                <utangcomp:EditPaymentModalView />
             </DataTemplate>
             <DataTemplate DataType="{x:Type shiftcomp:MovementModalViewModel}">
                 <shiftcomp:MovementModalView />

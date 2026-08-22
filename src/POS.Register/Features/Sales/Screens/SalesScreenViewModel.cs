@@ -27,7 +27,7 @@ public partial class SalesScreenViewModel : ObservableObject
             var sales = await ShellVm.SalesApi.GetTodayAsync();
             Rows = sales
                 .Where(s => s.RefundedFromId is null)
-                .Select(SaleRow.From)
+                .Select(s => SaleRow.From(s, ShellVm.Utang.NameOf))
                 .ToList();
         }
         catch (ApiException ex)

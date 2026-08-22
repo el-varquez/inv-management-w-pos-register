@@ -70,6 +70,21 @@
         <Setter Property="FontWeight" Value="Bold" />
     </Style>
 
+    <Style x:Key="BtnUtang" TargetType="Button" BasedOn="{StaticResource BtnBase}">
+        <Setter Property="Background" Value="{StaticResource GoldSoft}" />
+        <Setter Property="BorderBrush" Value="{StaticResource Gold}" />
+        <Setter Property="BorderThickness" Value="2" />
+        <Setter Property="Foreground" Value="{StaticResource Gold}" />
+        <Setter Property="FontWeight" Value="Bold" />
+    </Style>
+
+    <Style x:Key="BtnUtangSolid" TargetType="Button" BasedOn="{StaticResource BtnBase}">
+        <Setter Property="Background" Value="{StaticResource Gold}" />
+        <Setter Property="BorderBrush" Value="{StaticResource Gold}" />
+        <Setter Property="Foreground" Value="{StaticResource Paper}" />
+        <Setter Property="FontWeight" Value="Bold" />
+    </Style>
+
     <Style x:Key="BtnDangerSolid" TargetType="Button" BasedOn="{StaticResource BtnBase}">
         <Setter Property="Background" Value="{StaticResource Red}" />
         <Setter Property="BorderBrush" Value="{StaticResource Red}" />
