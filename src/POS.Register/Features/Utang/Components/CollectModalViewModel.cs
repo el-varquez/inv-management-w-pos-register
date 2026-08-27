@@ -25,6 +25,9 @@ public partial class CollectModalViewModel : ObservableObject, AppShell.IDefault
     private string amountText = "";
 
     [ObservableProperty]
+    private string noteText = "";
+
+    [ObservableProperty]
     private bool isBusy;
 
     public string Title => $"Collect payment — {_suki.Name}";
@@ -78,7 +81,8 @@ public partial class CollectModalViewModel : ObservableObject, AppShell.IDefault
         try
         {
             var amount = Amount;
-            await _shell.UtangApi.CollectAsync(_suki.Id, amount);
+            var note = string.IsNullOrWhiteSpace(NoteText) ? null : NoteText.Trim();
+            await _shell.UtangApi.CollectAsync(_suki.Id, amount, note);
             _shell.CloseModal();
             _shell.ShowToast($"{Peso.Format(amount)} collected from {_suki.Name} — cash in drawer");
             await _screen.RefreshAfterActionAsync();

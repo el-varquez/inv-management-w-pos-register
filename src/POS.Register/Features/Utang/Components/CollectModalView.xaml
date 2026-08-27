@@ -55,6 +55,9 @@
             <comp:NumpadView Margin="0,0,0,10" />
             <TextBlock Style="{StaticResource BodyText}" FontSize="12" Foreground="{StaticResource Ink3}"
                        Text="Cash goes into the drawer and counts as a collection." Margin="0,0,0,14" />
+            <TextBlock Style="{StaticResource Caption}" Text="NOTE (OPTIONAL)" Margin="0,0,0,7" />
+            <TextBox Style="{StaticResource InputText}" MinHeight="48" MaxLength="200"
+                     Text="{Binding NoteText, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,14" />
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
