@@ -34,8 +34,9 @@ public class UtangService
     public Task<SukiLedgerDto> GetLedgerAsync(Guid id)
         => _api.GetAsync<SukiLedgerDto>($"utang/sukis/{id}/ledger");
 
-    public Task CollectAsync(Guid sukiId, decimal amount)
-        => _api.PostAsync("utang/collect", new { SukiId = sukiId, Amount = amount });
+    public Task CollectAsync(Guid sukiId, decimal amount, string? note)
+        => _api.PostAsync(
+            "utang/collect", new { SukiId = sukiId, Amount = amount, Note = note });
 
     public Task VoidPaymentAsync(Guid id, string adminToken)
         => _api.PostAsync($"utang/payments/{id}/void", null, adminToken);

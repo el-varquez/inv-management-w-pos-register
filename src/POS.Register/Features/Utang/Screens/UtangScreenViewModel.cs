@@ -182,28 +182,33 @@ public partial class UtangScreenViewModel : ObservableObject
             foreach (var entry in ledger.Entries)
             {
                 var isCharge = entry.Type == "Charge";
+                var isAdjustment = entry.Type == "Adjustment";
+                var isPayment = !isCharge && !isAdjustment;
                 if (!entry.IsVoided)
                 {
-                    running += isCharge ? entry.Amount : -entry.Amount;
+                    running += isPayment ? -entry.Amount : entry.Amount;
                 }
                 var label = isCharge
                     ? $"Charge · {entry.ReceiptNumber}"
-                    : entry.TransactionId is not null
-                        ? $"{entry.Note} · {entry.ReceiptNumber}"
-                        : entry.Note ?? "Payment received";
+                    : isAdjustment
+                        ? $"Adjustment · {entry.Note}"
+                        : entry.TransactionId is not null
+                            ? $"{entry.Note} · {entry.ReceiptNumber}"
+                            : entry.Note ?? "Payment received";
                 var sub = entry.EditedFrom is { } was ? $"edited · was {Peso.Format(was)}" : "";
+                var showsAsCharge = isCharge || (isAdjustment && entry.Amount > 0m);
                 LedgerRows.Add(new LedgerRow(
                     entry.Id,
                     entry.CreatedAt.ToLocalTime().ToString("MMM d"),
                     label,
                     sub,
                     sub.Length > 0,
-                    isCharge ? Peso.Format(entry.Amount) : "",
-                    isCharge ? "" : Peso.Format(entry.Amount),
+                    showsAsCharge ? Peso.Format(entry.Amount) : "",
+                    showsAsCharge ? "" : Peso.Format(Math.Abs(entry.Amount)),
                     entry.IsVoided ? "—" : Peso.Format(running),
                     entry.IsVoided,
-                    !isCharge && !entry.IsVoided,
-                    !entry.IsVoided,
+                    isPayment && !entry.IsVoided,
+                    !isAdjustment && !entry.IsVoided,
                     entry.Amount,
                     isCharge,
                     entry.TransactionId));
