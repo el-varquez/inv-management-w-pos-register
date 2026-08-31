@@ -13,14 +13,18 @@ public static class ShiftReceipt
             new($"Refunds ({read.RefundCount}) — excluded", Peso.Format(read.Refunds), Tone: "Red"),
             new("Net sales (paid)", Peso.Format(read.NetSales), Bold: true, TopBorder: true),
             new("BY PAYMENT", IsHead: true),
-            new("Cash", Peso.Format(read.CashSales)),
-            new("GCash", Peso.Format(read.GcashSales)),
-            new("Maya", Peso.Format(read.MayaSales)),
+        };
+        foreach (var m in read.MethodSales)
+        {
+            rows.Add(new(m.Name, Peso.Format(m.Amount)));
+        }
+        rows.AddRange(new ReceiptRow[]
+        {
             new("UTANG — NOT SALES", IsHead: true),
             new($"Charged on credit ({read.UtangChargedCount})", Peso.Format(read.UtangCharged)),
             new($"incl. {Peso.Format(read.UtangMarkup)} markup", Tone: "Ink3"),
             new("Collections (incl. down payments)", Peso.Format(read.UtangCollections)),
-        };
+        });
         if (read.EWalletCashInCount > 0 || read.EWalletCashOutCount > 0)
         {
             rows.Add(new("E-WALLET — NOT SALES", IsHead: true));

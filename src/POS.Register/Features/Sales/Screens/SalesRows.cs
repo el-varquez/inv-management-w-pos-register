@@ -10,28 +10,25 @@ public record SaleRow(
     string Payment,
     decimal Amount,
     bool Refunded,
-    bool IsUtang)
+    bool IsInvoice)
 {
     public string Status => Refunded ? "Refunded" : "Completed";
 
     public static SaleRow From(SaleDto sale, Func<Guid?, string?> sukiNameOf)
     {
-        var isUtang = sale.PaymentType == "Utang";
+        var isInvoice = sale.MethodType == "Invoice";
         return new(
             sale.Id,
             sale.ReceiptNumber,
             sale.CreatedAt.ToLocalTime().ToString("h:mm tt"),
             sale.ItemCount,
-            isUtang
-                ? $"Utang · {sukiNameOf(sale.SukiId) ?? ""}"
-                : MethodLabel(sale.PaymentType),
+            isInvoice
+                ? $"{sale.PaymentMethod} · {sukiNameOf(sale.SukiId) ?? ""}"
+                : sale.PaymentMethod,
             sale.Total,
             sale.IsRefunded,
-            isUtang);
+            isInvoice);
     }
-
-    private static string MethodLabel(string paymentType)
-        => paymentType == "Gcash" ? "GCash" : paymentType;
 }
 
 public record SaleLine(string Name, int Qty, decimal Total)

@@ -12,11 +12,12 @@ public static class DayReceipt
             new($"Sales ({day.TransactionCount} paid txns)", Peso.Format(day.NetSales)),
             new("Net sales (paid)", Peso.Format(day.NetSales), Bold: true, TopBorder: true),
             new("BY PAYMENT", IsHead: true),
-            new("Cash", Peso.Format(day.CashSales)),
-            new("GCash", Peso.Format(day.GcashSales)),
-            new("Maya", Peso.Format(day.MayaSales)),
-            new("DRAWER", IsHead: true),
         };
+        foreach (var m in day.MethodSales)
+        {
+            rows.Add(new(m.Name, Peso.Format(m.Amount)));
+        }
+        rows.Add(new("DRAWER", IsHead: true));
         if (day.DrawerMovementsNet != 0m)
         {
             rows.Add(new("Payouts / pay-ins",
