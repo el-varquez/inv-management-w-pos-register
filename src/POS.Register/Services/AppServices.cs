@@ -12,8 +12,10 @@ public class AppServices
     public ShiftStore ShiftState { get; } = new();
     public CartStore Cart { get; } = new();
     public UtangStore UtangState { get; } = new();
+    public PaymentMethodStore MethodStore { get; } = new();
     public AuthService Auth { get; }
     public SettingsService StoreSettings { get; }
+    public PaymentMethodService PaymentMethods { get; }
     public ShiftService Shifts { get; }
     public DayService Days { get; }
     public SellService Sell { get; }
@@ -28,6 +30,7 @@ public class AppServices
         client.SessionExpired += () => SessionExpired?.Invoke();
         Auth = new AuthService(client);
         StoreSettings = new SettingsService(client);
+        PaymentMethods = new PaymentMethodService(client);
         Shifts = new ShiftService(client);
         Days = new DayService(client);
         Sell = new SellService(client);
