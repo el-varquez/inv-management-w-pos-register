@@ -31,7 +31,8 @@ public partial class ShellViewModel : ObservableObject
     public CartStore Cart => _services.Cart;
     public UtangStore Utang => _services.UtangState;
     public UtangService UtangApi => _services.Utang;
-    public bool ShowUtangRail => Settings.AcceptUtang || Utang.HasAnyBalance;
+    public PaymentMethodStore Methods => _services.MethodStore;
+    public bool ShowUtangRail => Methods.HasActiveInvoice || Utang.HasAnyBalance;
     public ShiftService ShiftApi => _services.Shifts;
     public DayService DayApi => _services.Days;
     public POS.Register.Features.Sell.Services.SellService SellApi => _services.Sell;
@@ -68,7 +69,7 @@ public partial class ShellViewModel : ObservableObject
         Sales = new SalesScreenViewModel(this);
         UtangScreen = new UtangScreenViewModel(this);
         Shift = new ShiftScreenViewModel(this);
-        Settings.PropertyChanged += (_, _) => OnPropertyChanged(nameof(ShowUtangRail));
+        Methods.PropertyChanged += (_, _) => OnPropertyChanged(nameof(ShowUtangRail));
         Utang.PropertyChanged += (_, _) => OnPropertyChanged(nameof(ShowUtangRail));
         CurrentScreen = Sell;
         _toastTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(2.4) };
@@ -86,9 +87,21 @@ public partial class ShellViewModel : ObservableObject
         Navigate("Sell");
         _ = LoadStoreNameAsync();
         _ = LoadSettingsAsync();
+        _ = RefreshPaymentMethodsAsync();
         _ = RefreshShiftAsync();
         _ = RefreshUtangAsync();
         _ = Sell.RefreshPopularAsync();
+    }
+
+    public async Task RefreshPaymentMethodsAsync()
+    {
+        try
+        {
+            Methods.All = await _services.PaymentMethods.GetAllAsync();
+        }
+        catch (ApiException)
+        {
+        }
     }
 
     public async Task RefreshUtangAsync()
@@ -139,7 +152,6 @@ public partial class ShellViewModel : ObservableObject
         {
             var settings = await _services.StoreSettings.GetSettingsAsync();
             Settings.StoreName = settings.StoreName;
-            Settings.AcceptUtang = settings.AcceptUtang;
             Settings.DefaultUtangMarkup = settings.DefaultUtangMarkup;
             Settings.TrackEWalletFloat = settings.TrackEWalletFloat;
         }

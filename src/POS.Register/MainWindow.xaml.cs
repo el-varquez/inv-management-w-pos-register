@@ -50,16 +50,22 @@ public partial class MainWindow : Window
             return;
         }
         if (e.Key is Key.Down or Key.Up
-            && shell.ActiveModal is Features.Sell.Components.UtangChargeModalViewModel utangModal)
+            && shell.ActiveModal is Components.PaymentModalViewModel { IsInvoice: true, Rows.Count: > 0 } invoiceModal)
         {
             if (e.Key == Key.Down)
             {
-                utangModal.SelectNextCommand.Execute(null);
+                invoiceModal.SelectNextCommand.Execute(null);
             }
             else
             {
-                utangModal.SelectPrevCommand.Execute(null);
+                invoiceModal.SelectPrevCommand.Execute(null);
             }
+            e.Handled = true;
+            return;
+        }
+        if (e.Key == Key.F7 && shell.ActiveModal is Components.PaymentModalViewModel paymentModal)
+        {
+            paymentModal.ToggleMethodCommand.Execute(null);
             e.Handled = true;
             return;
         }
@@ -105,7 +111,7 @@ public partial class MainWindow : Window
                 e.Handled = true;
                 break;
             case Key.F7:
-                shell.Sell.UtangCommand.Execute(null);
+                shell.Sell.OpenPaymentPickerCommand.Execute(null);
                 e.Handled = true;
                 break;
             case Key.Down:

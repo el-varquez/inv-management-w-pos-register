@@ -286,9 +286,6 @@
                         </Grid>
                         <Button Style="{StaticResource BtnPayHero}" Content="PAYMENT — F5" FontSize="18" Margin="0,14,0,0"
                                 Command="{Binding OpenPaymentCommand}" />
-                        <Button Style="{StaticResource BtnUtang}" Content="UTANG — CHARGE TO CUSTOMER · F7" MinHeight="52"
-                                Margin="0,10,0,0" Command="{Binding UtangCommand}"
-                                Visibility="{Binding ShellVm.Settings.AcceptUtang, Converter={StaticResource BoolToVis}}" />
                     </StackPanel>
                     <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                         <TextBlock Style="{StaticResource Caption}" Text="LAST ITEM" HorizontalAlignment="Center" />

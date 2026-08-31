@@ -74,8 +74,8 @@ public partial class UtangScreenViewModel : ObservableObject
     [ObservableProperty]
     private string newPhone = "";
 
-    public bool OffBanner => !ShellVm.Settings.AcceptUtang;
-    public bool CanAddSuki => ShellVm.Settings.AcceptUtang;
+    public bool OffBanner => !ShellVm.Methods.HasActiveInvoice;
+    public bool CanAddSuki => ShellVm.Methods.HasActiveInvoice;
     public bool HasCust => Selected is not null;
     public string CustName => Selected?.Name ?? "";
     public string CustPhone => Selected is { } s && !string.IsNullOrWhiteSpace(s.Phone) ? s.Phone : "—";
@@ -95,7 +95,7 @@ public partial class UtangScreenViewModel : ObservableObject
             _searchTimer.Stop();
             _ = RunSearchAsync(Search.Trim());
         };
-        ShellVm.Settings.PropertyChanged += (_, _) =>
+        ShellVm.Methods.PropertyChanged += (_, _) =>
         {
             OnPropertyChanged(nameof(OffBanner));
             OnPropertyChanged(nameof(CanAddSuki));

@@ -57,9 +57,6 @@
             <DataTemplate DataType="{x:Type sellcomp:QtyModalViewModel}">
                 <sellcomp:QtyModalView />
             </DataTemplate>
-            <DataTemplate DataType="{x:Type sellcomp:UtangChargeModalViewModel}">
-                <sellcomp:UtangChargeModalView />
-            </DataTemplate>
             <DataTemplate DataType="{x:Type salescomp:DetailModalViewModel}">
                 <salescomp:DetailModalView />
             </DataTemplate>

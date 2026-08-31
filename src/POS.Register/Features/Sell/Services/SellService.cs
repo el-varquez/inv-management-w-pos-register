@@ -18,7 +18,7 @@ public class SellService
     public Task<CreateSaleResult> CompleteSaleAsync(
         IList<SaleItemInput> items,
         decimal transactionDiscount,
-        string paymentType,
+        Guid paymentMethodId,
         decimal amountTendered,
         string? referenceNumber,
         Guid? sukiId = null,
@@ -27,7 +27,7 @@ public class SellService
         {
             Items = items,
             TransactionDiscount = transactionDiscount,
-            PaymentType = paymentType,
+            PaymentMethodId = paymentMethodId,
             AmountTendered = amountTendered,
             ReferenceNumber = referenceNumber,
             SukiId = sukiId,

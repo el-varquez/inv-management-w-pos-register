@@ -9,9 +9,6 @@ public partial class SettingsStore : ObservableObject
     private string storeName = CannedDay.StoreName;
 
     [ObservableProperty]
-    private bool acceptUtang = true;
-
-    [ObservableProperty]
     private decimal defaultUtangMarkup;
 
     [ObservableProperty]

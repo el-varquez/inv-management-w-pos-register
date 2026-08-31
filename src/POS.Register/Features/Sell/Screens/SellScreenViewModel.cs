@@ -359,19 +359,13 @@ public partial class SellScreenViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void Utang()
+    private void OpenPaymentPicker()
     {
-        if (!ShellVm.Settings.AcceptUtang)
+        OpenPayment();
+        if (ShellVm.ActiveModal is SharedComp.PaymentModalViewModel modal)
         {
-            ShellVm.ShowToast("Utang is OFF — collection-only");
-            return;
+            modal.ToggleMethodCommand.Execute(null);
         }
-        if (ShellVm.Cart.IsEmpty || !ShellVm.Day.IsShiftOpen)
-        {
-            ShellVm.ShowToast("Nothing to charge — ring an item first");
-            return;
-        }
-        ShellVm.OpenModal(new SellComp.UtangChargeModalViewModel(ShellVm));
     }
 
     [RelayCommand]

@@ -1,5 +1,7 @@
 namespace POS.Register.Types;
 
+public record MethodSalesDto(Guid PaymentMethodId, string Name, decimal Amount);
+
 public record DrawerMovementDto(
     Guid Id,
     decimal Amount,
@@ -20,9 +22,7 @@ public record ShiftReadDto(
     int TransactionCount,
     decimal Refunds,
     int RefundCount,
-    decimal CashSales,
-    decimal GcashSales,
-    decimal MayaSales,
+    List<MethodSalesDto> MethodSales,
     int EWalletCashInCount,
     decimal EWalletCashIn,
     int EWalletCashOutCount,
