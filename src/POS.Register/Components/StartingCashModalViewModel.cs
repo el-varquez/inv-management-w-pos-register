@@ -15,9 +15,7 @@ public partial class StartingCashModalViewModel : ObservableObject, AppShell.IDe
     private readonly AppShell.ShellViewModel _shell;
 
     public MoneyEntry Amount { get; } = new();
-    public MoneyEntry EWallet { get; } = new();
     public int NextNumber { get; }
-    public bool ShowEWallet { get; }
     public string Body => $"Opens shift #{NextNumber}. Count the drawer before opening.";
     public string ConfirmText => $"OPEN SHIFT #{NextNumber}";
 
@@ -28,7 +26,6 @@ public partial class StartingCashModalViewModel : ObservableObject, AppShell.IDe
     {
         _shell = shell;
         NextNumber = shell.Day.NextNumber;
-        ShowEWallet = shell.Settings.TrackEWalletFloat;
     }
 
     [RelayCommand]
@@ -52,7 +49,7 @@ public partial class StartingCashModalViewModel : ObservableObject, AppShell.IDe
         IsBusy = true;
         try
         {
-            await _shell.ShiftApi.OpenAsync(Amount.Value, ShowEWallet ? EWallet.Value : null);
+            await _shell.ShiftApi.OpenAsync(Amount.Value);
             await _shell.RefreshShiftAsync();
             _shell.CloseModal();
             _shell.ShowToast(

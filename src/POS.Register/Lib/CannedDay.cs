@@ -13,5 +13,7 @@ public static class CannedDay
 
     public const string LockedTitle = "No starting cash declared";
 
-    public const string HotkeyHint = "F1 search · ↑/↓ select line · F2 edit qty · F6 void line · F5 payment · F7 utang · Esc close";
+    public const string HotkeyHint = "F1 search · ↑/↓ select line · F2 edit qty · F6 void line · F5 payment · F7 method · Esc close";
+
+    public const string InvoiceHotkeyHint = "F1 search · ↑/↓ select line · F2 edit qty · F6 void line · F5 charge · Esc close";
 }

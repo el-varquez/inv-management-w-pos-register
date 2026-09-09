@@ -46,31 +46,10 @@ public partial class XReadModalViewModel : ObservableObject, AppShell.IDefaultAc
         new("₱1 · coin", 1m),
     ];
 
-    public MoneyEntry WalletCounted { get; } = new();
-    public bool ShowWallet { get; }
-
     public string Title => $"End shift #{_shell.Day.Current?.Number} — count the drawer";
     public decimal CountedTotal => Denominations.Sum(d => d.Total);
     public string CountedDisplay => Peso.Format(CountedTotal);
     public string ExpectedDisplay => Peso.Format(_shell.Day.Current?.ExpectedCash ?? 0m);
-    public string WalletExpectedDisplay => Peso.Format(_shell.Day.Current?.ExpectedEWalletBalance ?? 0m);
-
-    private decimal WalletVariance =>
-        WalletCounted.Value - (_shell.Day.Current?.ExpectedEWalletBalance ?? 0m);
-
-    public string WalletVerdict => WalletVariance switch
-    {
-        < 0 => $"WALLET SHORT by {Peso.Format(-WalletVariance)}",
-        > 0 => $"WALLET OVER by {Peso.Format(WalletVariance)}",
-        _ => "WALLET BALANCED — matches the app",
-    };
-
-    public string WalletVerdictTone => WalletVariance switch
-    {
-        < 0 => "Red",
-        > 0 => "Gold",
-        _ => "Confirm",
-    };
 
     private decimal Variance => CountedTotal - (_shell.Day.Current?.ExpectedCash ?? 0m);
 
@@ -91,16 +70,7 @@ public partial class XReadModalViewModel : ObservableObject, AppShell.IDefaultAc
     [ObservableProperty]
     private bool isBusy;
 
-    public XReadModalViewModel(AppShell.ShellViewModel shell)
-    {
-        _shell = shell;
-        ShowWallet = shell.Settings.TrackEWalletFloat;
-        WalletCounted.PropertyChanged += (_, _) =>
-        {
-            OnPropertyChanged(nameof(WalletVerdict));
-            OnPropertyChanged(nameof(WalletVerdictTone));
-        };
-    }
+    public XReadModalViewModel(AppShell.ShellViewModel shell) => _shell = shell;
 
     [RelayCommand]
     private void Increment(DenominationRow row)
@@ -137,7 +107,7 @@ public partial class XReadModalViewModel : ObservableObject, AppShell.IDefaultAc
         IsBusy = true;
         try
         {
-            await _shell.ShiftApi.CloseAsync(current.Id, CountedTotal, ShowWallet ? WalletCounted.Value : null);
+            await _shell.ShiftApi.CloseAsync(current.Id, CountedTotal);
             await _shell.RefreshShiftAsync();
             _shell.CloseModal();
             _shell.ShowToast($"Shift #{current.Number} ended — X read saved");
