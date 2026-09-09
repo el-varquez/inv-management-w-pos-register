@@ -2,9 +2,6 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:comp="clr-namespace:POS.Register.Components">
-    <UserControl.Resources>
-        <BooleanToVisibilityConverter x:Key="BoolToVis" />
-    </UserControl.Resources>
     <Border Style="{StaticResource ModalCard}" Width="400" Padding="26">
         <StackPanel>
             <TextBlock Style="{StaticResource TitleSection}" FontSize="22" FontWeight="Bold" Text="Declare starting cash" Margin="0,0,0,6" />
@@ -23,24 +20,9 @@
                              PreviewTextInput="OnAmountTextInput" />
                 </DockPanel>
             </Border>
-            <StackPanel Visibility="{Binding ShowEWallet, Converter={StaticResource BoolToVis}}">
-                <Border BorderBrush="{StaticResource LineStrong}" BorderThickness="1"
-                        CornerRadius="{StaticResource RadiusControl}" Padding="18,12" Margin="0,0,0,6">
-                    <DockPanel>
-                        <TextBlock Style="{StaticResource Caption}" Text="STARTING E-WALLET" VerticalAlignment="Center" />
-                        <TextBlock DockPanel.Dock="Right" Style="{StaticResource MoneyModal}" FontSize="24"
-                                   Text="₱" Margin="0,0,4,0" VerticalAlignment="Center" />
-                        <TextBox BorderThickness="0" Background="Transparent" TextAlignment="Right"
-                                 FontFamily="{StaticResource FontDisplay}" FontSize="24" FontWeight="Bold"
-                                 Foreground="{StaticResource Ink}" VerticalAlignment="Center" MaxLength="7"
-                                 Text="{Binding EWallet.Digits, UpdateSourceTrigger=PropertyChanged}"
-                                 PreviewTextInput="OnAmountTextInput" />
-                    </DockPanel>
-                </Border>
-                <TextBlock Style="{StaticResource BodyText}" FontSize="12" Foreground="{StaticResource Ink3}"
-                           TextWrapping="Wrap" Margin="0,0,0,14"
-                           Text="Read this from the e-wallet app. The Z read reconciles it like a second drawer." />
-            </StackPanel>
+            <TextBlock Style="{StaticResource BodyText}" FontSize="12" Foreground="{StaticResource Ink3}"
+                       TextWrapping="Wrap" Margin="0,0,0,14"
+                       Text="One figure for all register money — the drawer plus the e-wallet balance." />
             <comp:NumpadView Margin="0,0,0,14" />
             <Grid>
                 <Grid.ColumnDefinitions>

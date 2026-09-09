@@ -42,23 +42,23 @@ public partial class MainWindow : Window
                 shell.DismissCommand.Execute(null);
                 e.Handled = true;
             }
-            else if (shell.IsLoggedIn && ReferenceEquals(shell.CurrentScreen, shell.Sell) && shell.Sell.HasQuery)
+            else if (shell.IsLoggedIn && shell.ActiveTicket is { HasQuery: true } queried)
             {
-                shell.Sell.ClearSearch();
+                queried.ClearSearch();
                 e.Handled = true;
             }
             return;
         }
         if (e.Key is Key.Down or Key.Up
-            && shell.ActiveModal is Components.PaymentModalViewModel { IsInvoice: true, Rows.Count: > 0 } invoiceModal)
+            && shell.ActiveModal is Features.Invoices.Components.ChargeModalViewModel { Rows.Count: > 0 } chargeModal)
         {
             if (e.Key == Key.Down)
             {
-                invoiceModal.SelectNextCommand.Execute(null);
+                chargeModal.SelectNextCommand.Execute(null);
             }
             else
             {
-                invoiceModal.SelectPrevCommand.Execute(null);
+                chargeModal.SelectPrevCommand.Execute(null);
             }
             e.Handled = true;
             return;
@@ -83,43 +83,49 @@ public partial class MainWindow : Window
         {
             if (shell.IsLoggedIn && shell.ActiveModal is null)
             {
-                shell.NavigateCommand.Execute("Sell");
-                if (shell.Day.IsShiftOpen)
+                if (shell.ActiveTicket is { } current)
                 {
-                    shell.Sell.RequestScanFocus();
+                    current.FocusSearch();
+                }
+                else
+                {
+                    shell.NavigateCommand.Execute("Sell");
                 }
                 e.Handled = true;
             }
             return;
         }
-        if (!shell.IsLoggedIn || shell.ActiveModal is not null || !ReferenceEquals(shell.CurrentScreen, shell.Sell))
+        if (!shell.IsLoggedIn || shell.ActiveModal is not null || shell.ActiveTicket is not { } screen)
         {
             return;
         }
         switch (e.Key)
         {
             case Key.F2:
-                shell.Sell.EditQtyCommand.Execute(null);
+                screen.EditQtyCommand.Execute(null);
                 e.Handled = true;
                 break;
             case Key.F5:
-                shell.Sell.OpenPaymentCommand.Execute(null);
+                screen.OpenPaymentCommand.Execute(null);
                 e.Handled = true;
                 break;
             case Key.F6:
-                shell.Sell.VoidLineCommand.Execute(null);
+                screen.VoidLineCommand.Execute(null);
                 e.Handled = true;
                 break;
             case Key.F7:
-                shell.Sell.OpenPaymentPickerCommand.Execute(null);
-                e.Handled = true;
+                if (screen is Features.Sell.Screens.SellScreenViewModel sellScreen)
+                {
+                    sellScreen.OpenPaymentPickerCommand.Execute(null);
+                    e.Handled = true;
+                }
                 break;
             case Key.Down:
-                shell.Sell.SelectNextCommand.Execute(null);
+                screen.SelectNextCommand.Execute(null);
                 e.Handled = true;
                 break;
             case Key.Up:
-                shell.Sell.SelectPrevCommand.Execute(null);
+                screen.SelectPrevCommand.Execute(null);
                 e.Handled = true;
                 break;
         }

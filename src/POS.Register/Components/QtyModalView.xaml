@@ -1,0 +1,33 @@
+<UserControl x:Class="POS.Register.Components.QtyModalView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:comp="clr-namespace:POS.Register.Components">
+    <Border Style="{StaticResource ModalCard}" Width="360" Padding="26">
+        <StackPanel>
+            <TextBlock Style="{StaticResource TitleSection}" FontSize="22" FontWeight="Bold" Text="Edit quantity" Margin="0,0,0,6" />
+            <TextBlock Style="{StaticResource BodyText}" FontSize="14" Foreground="{StaticResource Ink2}"
+                       Text="{Binding Line.Name}" Margin="0,0,0,14" />
+            <Border BorderBrush="{StaticResource LineStrong}" BorderThickness="1"
+                    CornerRadius="{StaticResource RadiusControl}" Padding="18,12" Margin="0,0,0,14">
+                <DockPanel>
+                    <TextBlock Style="{StaticResource Caption}" Text="QTY" VerticalAlignment="Center" />
+                    <TextBox x:Name="QtyBox" DockPanel.Dock="Right" Style="{StaticResource InputText}" FontSize="30" MinWidth="120"
+                             BorderThickness="0" Background="Transparent" TextAlignment="Right"
+                             Text="{Binding QtyText, UpdateSourceTrigger=PropertyChanged}" />
+                </DockPanel>
+            </Border>
+            <comp:NumpadView Margin="0,0,0,14" />
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="10" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Button Style="{StaticResource BtnGhost}" Content="Cancel" MinHeight="50" Padding="20,0"
+                        Command="{Binding CancelCommand}" />
+                <Button Grid.Column="2" Style="{StaticResource BtnPrimary}" Content="SET QTY" MinHeight="50"
+                        Command="{Binding ConfirmCommand}" />
+            </Grid>
+        </StackPanel>
+    </Border>
+</UserControl>

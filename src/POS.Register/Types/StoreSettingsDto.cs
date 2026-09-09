@@ -5,5 +5,5 @@ public record StoreSettingsDto(
     string Address,
     string ReceiptFooter,
     decimal DefaultUtangMarkup,
-    bool TrackEWalletFloat,
-    Guid? EWalletFeeItemId);
+    bool AcceptUtang,
+    int UtangReminderDays);

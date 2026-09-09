@@ -18,22 +18,6 @@ public static class ShiftReceipt
         {
             rows.Add(new(m.Name, Peso.Format(m.Amount)));
         }
-        rows.AddRange(new ReceiptRow[]
-        {
-            new("UTANG — NOT SALES", IsHead: true),
-            new($"Charged on credit ({read.UtangChargedCount})", Peso.Format(read.UtangCharged)),
-            new($"incl. {Peso.Format(read.UtangMarkup)} markup", Tone: "Ink3"),
-            new("Collections (incl. down payments)", Peso.Format(read.UtangCollections)),
-        });
-        if (read.EWalletCashInCount > 0 || read.EWalletCashOutCount > 0)
-        {
-            rows.Add(new("E-WALLET — NOT SALES", IsHead: true));
-            rows.Add(new($"Cash in ({read.EWalletCashInCount}) — sent from wallet",
-                Peso.Format(read.EWalletCashIn)));
-            rows.Add(new($"Cash out ({read.EWalletCashOutCount}) — received to wallet",
-                Peso.Format(read.EWalletCashOut)));
-            rows.Add(new("Fees earned are counted in sales above", Tone: "Ink3"));
-        }
         rows.Add(new("DRAWER", IsHead: true));
         rows.Add(new("Starting cash", Peso.Format(read.StartingCash)));
         if (read.DrawerMovementsNet != 0m)
@@ -60,29 +44,6 @@ public static class ShiftReceipt
             else
             {
                 rows.Add(new("Balanced", Peso.Format(0m), Tone: "Confirm", Bold: true));
-            }
-        }
-        if (read.StartingEWalletBalance is { } startingWallet)
-        {
-            rows.Add(new("E-WALLET — SECOND DRAWER", IsHead: true));
-            rows.Add(new("Starting balance", Peso.Format(startingWallet)));
-            rows.Add(new("Expected balance", Peso.Format(read.ExpectedEWalletBalance ?? startingWallet), Bold: true, TopBorder: true));
-            if (read.IsClosed && read.CountedEWalletBalance is { } countedWallet)
-            {
-                rows.Add(new("Counted balance", Peso.Format(countedWallet)));
-                var walletVariance = read.EWalletVariance ?? 0m;
-                if (walletVariance < 0m)
-                {
-                    rows.Add(new("Wallet short", Peso.Format(-walletVariance), Tone: "Red", Bold: true));
-                }
-                else if (walletVariance > 0m)
-                {
-                    rows.Add(new("Wallet over", Peso.Format(walletVariance), Tone: "Gold", Bold: true));
-                }
-                else
-                {
-                    rows.Add(new("Wallet balanced", Peso.Format(0m), Tone: "Confirm", Bold: true));
-                }
             }
         }
         return rows;

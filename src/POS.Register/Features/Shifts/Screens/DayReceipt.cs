@@ -43,24 +43,6 @@ public static class DayReceipt
         {
             rows.Add(new("Balanced", Peso.Format(0m), Tone: "Confirm", Bold: true));
         }
-        if (day.CountedEWalletBalance is { } countedWallet)
-        {
-            rows.Add(new("E-WALLET — SECOND DRAWER", IsHead: true));
-            rows.Add(new("Counted balance (last X read)", Peso.Format(countedWallet), Bold: true, TopBorder: true));
-            var walletVariance = day.EWalletVariance ?? 0m;
-            if (walletVariance < 0m)
-            {
-                rows.Add(new("Wallet short (all shifts)", Peso.Format(-walletVariance), Tone: "Red", Bold: true));
-            }
-            else if (walletVariance > 0m)
-            {
-                rows.Add(new("Wallet over (all shifts)", Peso.Format(walletVariance), Tone: "Gold", Bold: true));
-            }
-            else
-            {
-                rows.Add(new("Wallet balanced", Peso.Format(0m), Tone: "Confirm", Bold: true));
-            }
-        }
         rows.Add(new("SHIFTS", IsHead: true));
         foreach (var shift in day.Shifts.Where(s => s.IsClosed))
         {

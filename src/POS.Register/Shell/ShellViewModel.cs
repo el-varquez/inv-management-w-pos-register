@@ -2,10 +2,9 @@ using System.Windows.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using POS.Register.Features.Auth.Screens;
-using POS.Register.Features.Sales.Screens;
+using POS.Register.Features.Invoices.Screens;
 using POS.Register.Features.Sell.Screens;
 using POS.Register.Features.Shifts.Screens;
-using POS.Register.Features.Utang.Screens;
 using POS.Register.Lib;
 using POS.Register.Services;
 using POS.Register.Store;
@@ -21,22 +20,23 @@ public partial class ShellViewModel : ObservableObject
 
     public LoginScreenViewModel Login { get; }
     public SellScreenViewModel Sell { get; }
-    public SalesScreenViewModel Sales { get; }
-    public UtangScreenViewModel UtangScreen { get; }
+    public InvoiceScreenViewModel Invoices { get; }
     public ShiftScreenViewModel Shift { get; }
 
     public SessionStore Session => _services.Session;
     public SettingsStore Settings => _services.Settings;
     public ShiftStore Day => _services.ShiftState;
     public CartStore Cart => _services.Cart;
-    public UtangStore Utang => _services.UtangState;
+    public CartStore InvoiceCart => _services.InvoiceCart;
+    public CatalogService Catalog => _services.Catalog;
     public UtangService UtangApi => _services.Utang;
     public PaymentMethodStore Methods => _services.MethodStore;
-    public bool ShowUtangRail => Methods.HasActiveInvoice || Utang.HasAnyBalance;
+    public bool ShowInvoiceRail => Settings.AcceptUtang;
     public ShiftService ShiftApi => _services.Shifts;
     public DayService DayApi => _services.Days;
     public POS.Register.Features.Sell.Services.SellService SellApi => _services.Sell;
-    public POS.Register.Features.Sales.Services.SalesService SalesApi => _services.Sales;
+    public POS.Register.Features.Sell.Services.SalesService SalesApi => _services.Sales;
+    public POS.Register.Features.Invoices.Services.InvoiceService InvoiceApi => _services.Invoices;
 
     public Task<LoginResponse> AuthenticateAsync(string username, string password)
         => _services.Auth.LoginAsync(username, password);
@@ -66,11 +66,9 @@ public partial class ShellViewModel : ObservableObject
         _services.SessionExpired += OnSessionExpired;
         Login = new LoginScreenViewModel(this, _services.Auth, _services.Settings);
         Sell = new SellScreenViewModel(this);
-        Sales = new SalesScreenViewModel(this);
-        UtangScreen = new UtangScreenViewModel(this);
+        Invoices = new InvoiceScreenViewModel(this);
         Shift = new ShiftScreenViewModel(this);
-        Methods.PropertyChanged += (_, _) => OnPropertyChanged(nameof(ShowUtangRail));
-        Utang.PropertyChanged += (_, _) => OnPropertyChanged(nameof(ShowUtangRail));
+        Settings.PropertyChanged += (_, _) => OnPropertyChanged(nameof(ShowInvoiceRail));
         CurrentScreen = Sell;
         _toastTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(2.4) };
         _toastTimer.Tick += (_, _) => { Toast = null; _toastTimer.Stop(); };
@@ -89,7 +87,6 @@ public partial class ShellViewModel : ObservableObject
         _ = LoadSettingsAsync();
         _ = RefreshPaymentMethodsAsync();
         _ = RefreshShiftAsync();
-        _ = RefreshUtangAsync();
         _ = Sell.RefreshPopularAsync();
     }
 
@@ -98,17 +95,6 @@ public partial class ShellViewModel : ObservableObject
         try
         {
             Methods.All = await _services.PaymentMethods.GetAllAsync();
-        }
-        catch (ApiException)
-        {
-        }
-    }
-
-    public async Task RefreshUtangAsync()
-    {
-        try
-        {
-            Utang.Set(await _services.Utang.GetSukisAsync());
         }
         catch (ApiException)
         {
@@ -153,7 +139,7 @@ public partial class ShellViewModel : ObservableObject
             var settings = await _services.StoreSettings.GetSettingsAsync();
             Settings.StoreName = settings.StoreName;
             Settings.DefaultUtangMarkup = settings.DefaultUtangMarkup;
-            Settings.TrackEWalletFloat = settings.TrackEWalletFloat;
+            Settings.AcceptUtang = settings.AcceptUtang;
         }
         catch (ApiException)
         {
@@ -188,22 +174,26 @@ public partial class ShellViewModel : ObservableObject
         ActiveScreenName = name;
         CurrentScreen = name switch
         {
-            "Sales" => Sales,
-            "Utang" => UtangScreen,
+            "Invoices" => Invoices,
             "Shift" => Shift,
             _ => Sell,
         };
-        if (name == "Utang" && IsLoggedIn)
-        {
-            _ = UtangScreen.LoadAsync();
-        }
         if (name == "Shift" && IsLoggedIn)
         {
             _ = RefreshShiftAsync();
         }
-        if (name == "Sales" && IsLoggedIn)
+        if (name == "Invoices" && IsLoggedIn)
         {
-            _ = Sales.LoadAsync();
+            _ = Invoices.RefreshPopularAsync();
+        }
+        if (IsLoggedIn && ActiveTicket is { } ticket)
+        {
+            if (ticket.ShowingList)
+            {
+                _ = ticket.LoadListAsync();
+            }
+            System.Windows.Application.Current?.Dispatcher.BeginInvoke(
+                new Action(ticket.FocusScanIfPossible), DispatcherPriority.Loaded);
         }
     }
 
@@ -232,9 +222,9 @@ public partial class ShellViewModel : ObservableObject
             Login.Submit();
             return;
         }
-        if (ReferenceEquals(CurrentScreen, Sell) && Sell.HasQuery)
+        if (ActiveTicket is { HasQuery: true } ticket)
         {
-            _ = Sell.CommitSearchAsync();
+            _ = ticket.CommitSearchAsync();
         }
     }
 
@@ -251,7 +241,9 @@ public partial class ShellViewModel : ObservableObject
 
     public void CloseModal() => ActiveModal = null;
 
-    public void FocusScan() => Sell.RequestScanFocus();
+    public TicketScreenViewModel? ActiveTicket => CurrentScreen as TicketScreenViewModel;
+
+    public void FocusScan() => ActiveTicket?.FocusScanIfPossible();
 
     public void ShowToast(string message)
     {

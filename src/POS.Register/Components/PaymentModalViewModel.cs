@@ -1,7 +1,5 @@
-using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Windows.Input;
-using System.Windows.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using POS.Register.Lib;
@@ -12,44 +10,19 @@ namespace POS.Register.Components;
 
 public record QuickBill(string Label, decimal Amount);
 
-public partial class SukiRow : ObservableObject
-{
-    public SukiDto Suki { get; }
-    public string Initial => Suki.Name.Length > 0 ? Suki.Name[..1] : "?";
-    public string Name => Suki.Name;
-    public string PhoneDisplay => string.IsNullOrWhiteSpace(Suki.Phone) ? "—" : Suki.Phone;
-    public string BalanceDisplay => Peso.Format(Suki.Balance);
-    public bool IsZeroBalance => Suki.Balance == 0m;
-
-    [ObservableProperty]
-    private bool isSelected;
-
-    [ObservableProperty]
-    private bool isHighlighted;
-
-    public SukiRow(SukiDto suki, bool selected)
-    {
-        Suki = suki;
-        isSelected = selected;
-    }
-}
-
 public partial class PaymentModalViewModel : ObservableObject, POS.Register.Shell.IDefaultAction
 {
     public ICommand DefaultCommand => DefaultActionCommand;
     public ICommand DismissCommand => DismissStepCommand;
 
     private readonly POS.Register.Shell.ShellViewModel _shell;
-    private readonly DispatcherTimer _searchTimer;
-    private bool _suppressSearch;
 
-    public IReadOnlyList<PaymentMethodDto> Methods => _shell.Methods.ActiveMethods;
+    public IReadOnlyList<PaymentMethodDto> Methods { get; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(
-        nameof(IsCash), nameof(IsInvoice), nameof(ShowReference), nameof(SelectedName),
-        nameof(EwalletCaption), nameof(ReferencePlaceholder), nameof(Title),
-        nameof(AmountCaption), nameof(AmountDueDisplay), nameof(CommitLabel))]
+        nameof(IsCash), nameof(ShowReference), nameof(SelectedName),
+        nameof(EwalletCaption), nameof(ReferencePlaceholder))]
     [NotifyCanExecuteChangedFor(nameof(CompleteCommand))]
     private PaymentMethodDto? selectedMethod;
 
@@ -68,39 +41,11 @@ public partial class PaymentModalViewModel : ObservableObject, POS.Register.Shel
     [ObservableProperty]
     private bool isBusy;
 
-    public ObservableCollection<SukiRow> Rows { get; } = [];
-    public MoneyEntry Down { get; } = new();
-
-    [ObservableProperty]
-    private string search = "";
-
-    [ObservableProperty]
-    private int resultIndex = -1;
-
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(CommitLabel))]
-    [NotifyCanExecuteChangedFor(nameof(CompleteCommand))]
-    private SukiDto? selectedSuki;
-
-    [ObservableProperty]
-    private bool addingSuki;
-
-    [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(SaveSukiCommand))]
-    private string newName = "";
-
-    [ObservableProperty]
-    private string newPhone = "";
-
     public bool IsCash => SelectedMethod?.Id == KnownPaymentMethods.Cash;
-    public bool IsInvoice => SelectedMethod?.Type == "Invoice";
-    public bool ShowReference => !IsCash && !IsInvoice;
+    public bool ShowReference => !IsCash;
     public string SelectedName => SelectedMethod?.Name.ToUpperInvariant() ?? "";
-    public string Title => IsInvoice ? $"{SelectedMethod?.Name} — charge to customer" : "Payment";
     public decimal Total => _shell.Cart.Total;
     public string TotalDisplay => Peso.Format(Total);
-    public string AmountCaption => IsInvoice ? "SALE TOTAL" : "AMOUNT DUE";
-    public string AmountDueDisplay => IsInvoice ? Peso.Format(UtangTotal) : TotalDisplay;
     public string EwalletCaption
         => $"Customer pays {TotalDisplay} via {SelectedMethod?.Name} — enter the reference number to complete.";
     public string ReferencePlaceholder => $"{SelectedMethod?.Name} reference number";
@@ -115,22 +60,10 @@ public partial class PaymentModalViewModel : ObservableObject, POS.Register.Shel
         ? $"Insufficient — need {Peso.Format(Total - Tendered)}"
         : Peso.Format(Tendered - Total);
 
-    public decimal UtangTotal =>
-        _shell.Cart.Lines.Sum(l =>
-            (l.Price + (l.UtangMarkup ?? _shell.Settings.DefaultUtangMarkup)) * l.Qty)
-        - _shell.Cart.Discount;
-
-    private decimal DownValue => Math.Min(Down.Value, UtangTotal);
-
-    public decimal ChargeAmount => UtangTotal - DownValue;
-
-    public string CommitLabel => SelectedSuki is { } suki
-        ? $"CHARGE {Peso.Format(ChargeAmount)} TO {suki.Name.ToUpperInvariant()} — NEW BAL {Peso.Format(suki.Balance + ChargeAmount)}"
-        : "SELECT A CUSTOMER";
-
     public PaymentModalViewModel(POS.Register.Shell.ShellViewModel shell)
     {
         _shell = shell;
+        Methods = shell.Methods.ActiveMethods;
         selectedMethod = Methods.FirstOrDefault(m => m.Id == KnownPaymentMethods.Cash)
             ?? Methods.FirstOrDefault();
         tenderedText = Total.ToString("0.##", CultureInfo.InvariantCulture);
@@ -145,13 +78,6 @@ public partial class PaymentModalViewModel : ObservableObject, POS.Register.Shel
             }
         }
         QuickBills = bills;
-        Down.PropertyChanged += (_, _) => OnPropertyChanged(nameof(CommitLabel));
-        _searchTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(250) };
-        _searchTimer.Tick += (_, _) =>
-        {
-            _searchTimer.Stop();
-            _ = RunSearchAsync(Search.Trim());
-        };
     }
 
     partial void OnTenderedTextChanged(string value)
@@ -163,61 +89,12 @@ public partial class PaymentModalViewModel : ObservableObject, POS.Register.Shel
         }
     }
 
-    partial void OnSearchChanged(string value)
-    {
-        _searchTimer.Stop();
-        if (_suppressSearch)
-        {
-            return;
-        }
-        if (value.Trim().Length == 0)
-        {
-            Rows.Clear();
-            ResultIndex = -1;
-            return;
-        }
-        _searchTimer.Start();
-    }
-
-    partial void OnResultIndexChanged(int value)
-    {
-        for (var i = 0; i < Rows.Count; i++)
-        {
-            Rows[i].IsHighlighted = i == value;
-        }
-    }
-
-    partial void OnSelectedSukiChanged(SukiDto? value)
-    {
-        foreach (var row in Rows)
-        {
-            row.IsSelected = row.Suki.Id == value?.Id;
-        }
-    }
-
     [RelayCommand]
-    private void Digit(string key)
-    {
-        if (IsInvoice)
-        {
-            Down.Push(key);
-            OnPropertyChanged(nameof(CommitLabel));
-            return;
-        }
-        TenderedText += key;
-    }
+    private void Digit(string key) => TenderedText += key;
 
     [RelayCommand]
     private void Backspace()
-    {
-        if (IsInvoice)
-        {
-            Down.Backspace();
-            OnPropertyChanged(nameof(CommitLabel));
-            return;
-        }
-        TenderedText = TenderedText.Length > 0 ? TenderedText[..^1] : "";
-    }
+        => TenderedText = TenderedText.Length > 0 ? TenderedText[..^1] : "";
 
     [RelayCommand]
     private void PickBill(QuickBill bill)
@@ -234,98 +111,11 @@ public partial class PaymentModalViewModel : ObservableObject, POS.Register.Shel
     }
 
     [RelayCommand]
-    private void SelectNext()
-    {
-        if (Rows.Count == 0)
-        {
-            return;
-        }
-        ResultIndex = Math.Min(Rows.Count - 1, ResultIndex + 1);
-    }
-
-    [RelayCommand]
-    private void SelectPrev() => ResultIndex = Math.Max(-1, ResultIndex - 1);
-
-    [RelayCommand]
     private void DefaultAction()
     {
-        if (IsInvoice && ResultIndex >= 0 && ResultIndex < Rows.Count)
-        {
-            SelectAndCollapse(Rows[ResultIndex].Suki);
-            return;
-        }
         if (CompleteCommand.CanExecute(null))
         {
             CompleteCommand.Execute(null);
-        }
-    }
-
-    private void SelectAndCollapse(SukiDto suki)
-    {
-        SelectedSuki = suki;
-        _suppressSearch = true;
-        Search = suki.Name;
-        _suppressSearch = false;
-        Rows.Clear();
-        ResultIndex = -1;
-    }
-
-    private async Task RunSearchAsync(string term)
-    {
-        if (term.Length == 0 || term != Search.Trim())
-        {
-            return;
-        }
-        try
-        {
-            var sukis = await _shell.UtangApi.GetSukisAsync(term);
-            if (term != Search.Trim())
-            {
-                return;
-            }
-            Rows.Clear();
-            foreach (var suki in sukis)
-            {
-                Rows.Add(new SukiRow(suki, suki.Id == SelectedSuki?.Id));
-            }
-            ResultIndex = -1;
-        }
-        catch (ApiException ex)
-        {
-            _shell.ShowToast(ex.Message);
-        }
-    }
-
-    [RelayCommand]
-    private void PickSuki(SukiRow row) => SelectAndCollapse(row.Suki);
-
-    [RelayCommand]
-    private void ToggleAddSuki()
-    {
-        AddingSuki = !AddingSuki;
-        NewName = "";
-        NewPhone = "";
-    }
-
-    private bool CanSaveSuki() => NewName.Trim().Length > 0;
-
-    [RelayCommand(CanExecute = nameof(CanSaveSuki))]
-    private async Task SaveSukiAsync()
-    {
-        try
-        {
-            var created = await _shell.UtangApi.CreateSukiAsync(
-                NewName.Trim(),
-                string.IsNullOrWhiteSpace(NewPhone) ? null : NewPhone.Trim());
-            AddingSuki = false;
-            NewName = "";
-            NewPhone = "";
-            SelectAndCollapse(created);
-            _ = _shell.RefreshUtangAsync();
-        }
-        catch (ApiException ex)
-        {
-            _shell.ShowToast(ex.Message);
         }
     }
 
@@ -338,10 +128,6 @@ public partial class PaymentModalViewModel : ObservableObject, POS.Register.Shel
         if (IsCash)
         {
             return !IsInsufficient;
-        }
-        if (IsInvoice)
-        {
-            return SelectedSuki is not null;
         }
         return !SelectedMethod.RequiresReference || ReferenceText.Trim().Length > 0;
     }
@@ -361,20 +147,7 @@ public partial class PaymentModalViewModel : ObservableObject, POS.Register.Shel
                 .Select(l => new SaleItemInput(l.ItemId, l.Qty, 0m))
                 .ToList();
 
-            if (IsInvoice && SelectedSuki is { } suki)
-            {
-                var down = DownValue;
-                var result = await _shell.SellApi.CompleteSaleAsync(
-                    items, _shell.Cart.Discount, method.Id, 0m, null, suki.Id, down);
-                _shell.Cart.Clear();
-                _ = _shell.RefreshShiftAsync();
-                _ = _shell.RefreshUtangAsync();
-                _shell.CloseModal();
-                _shell.ShowToast(
-                    $"Charged {Peso.Format(result.Total - down)} to {suki.Name} · {result.ReceiptNumber}");
-                _shell.FocusScan();
-            }
-            else if (IsCash)
+            if (IsCash)
             {
                 var result = await _shell.SellApi.CompleteSaleAsync(
                     items, _shell.Cart.Discount, method.Id, Tendered, null);

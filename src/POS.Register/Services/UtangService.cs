@@ -30,20 +30,4 @@ public class UtangService
 
     public Task<SukiDto> CreateSukiAsync(string name, string? phone)
         => _api.PostAsync<SukiDto>("utang/sukis", new { Name = name, Phone = phone });
-
-    public Task<SukiLedgerDto> GetLedgerAsync(Guid id)
-        => _api.GetAsync<SukiLedgerDto>($"utang/sukis/{id}/ledger");
-
-    public Task CollectAsync(Guid sukiId, decimal amount, string? note)
-        => _api.PostAsync(
-            "utang/collect", new { SukiId = sukiId, Amount = amount, Note = note });
-
-    public Task VoidPaymentAsync(Guid id, string adminToken)
-        => _api.PostAsync($"utang/payments/{id}/void", null, adminToken);
-
-    public Task EditPaymentAsync(Guid id, decimal amount, string adminToken)
-        => _api.PutAsync($"utang/payments/{id}", new { Amount = amount }, adminToken);
-
-    public Task VoidChargeAsync(Guid transactionId, string adminToken)
-        => _api.PostAsync($"sales/{transactionId}/refund", null, adminToken);
 }

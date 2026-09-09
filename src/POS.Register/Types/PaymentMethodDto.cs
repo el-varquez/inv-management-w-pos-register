@@ -3,7 +3,6 @@ namespace POS.Register.Types;
 public record PaymentMethodDto(
     Guid Id,
     string Name,
-    string Type,
     bool RequiresReference,
     bool IsActive,
     bool IsSystem);

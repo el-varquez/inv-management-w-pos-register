@@ -15,11 +15,9 @@ public record SaleDetailDto(
     decimal Total,
     Guid PaymentMethodId,
     string PaymentMethod,
-    string MethodType,
     string? ReferenceNumber,
     decimal AmountTendered,
     decimal Change,
     bool IsRefunded,
-    Guid? SukiId,
     List<SaleLineDto> Lines,
     DateTime CreatedAt);
