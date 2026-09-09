@@ -16,18 +16,12 @@ public class ShiftService
     public Task<ShiftReadDto> GetReadAsync(Guid shiftId)
         => _api.GetAsync<ShiftReadDto>($"shifts/{shiftId}");
 
-    public Task OpenAsync(decimal startingCash, decimal? startingEWalletBalance)
-        => _api.PostAsync("shifts/open",
-            new { StartingCash = startingCash, StartingEWalletBalance = startingEWalletBalance });
+    public Task OpenAsync(decimal startingCash)
+        => _api.PostAsync("shifts/open", new { StartingCash = startingCash });
 
-    public Task CloseAsync(Guid shiftId, decimal countedCash, decimal? countedEWalletBalance)
-        => _api.PostAsync($"shifts/{shiftId}/close",
-            new { CountedCash = countedCash, CountedEWalletBalance = countedEWalletBalance });
+    public Task CloseAsync(Guid shiftId, decimal countedCash)
+        => _api.PostAsync($"shifts/{shiftId}/close", new { CountedCash = countedCash });
 
     public Task RecordMovementAsync(decimal amount, string note)
         => _api.PostAsync("shifts/movements", new { Amount = amount, Note = note });
-
-    public Task RecordEWalletAsync(string direction, decimal principal, decimal fee)
-        => _api.PostAsync("shifts/ewallet",
-            new { Direction = direction, Principal = principal, Fee = fee });
 }
