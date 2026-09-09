@@ -13,8 +13,6 @@ public record DayReadDto(
     decimal DrawerMovementsNet,
     decimal? CountedCash,
     decimal? CashVariance,
-    decimal? CountedEWalletBalance,
-    decimal? EWalletVariance,
     int ShiftCount,
     List<ShiftSummaryDto> Shifts);
 
