@@ -1,12 +1,12 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using POS.Register.Features.Sales.Screens;
+using POS.Register.Features.Sell.Screens;
 using POS.Register.Lib;
 using POS.Register.Services;
 using SharedComp = POS.Register.Components;
 using AppShell = POS.Register.Shell;
 
-namespace POS.Register.Features.Sales.Components;
+namespace POS.Register.Features.Sell.Components;
 
 public partial class DetailModalViewModel : ObservableObject, AppShell.IDefaultAction
 {
@@ -45,7 +45,7 @@ public partial class DetailModalViewModel : ObservableObject, AppShell.IDefaultA
             _shell.OpenModal(new DetailModalViewModel(
                 _shell, Row with { Refunded = true }, Lines));
             _shell.ShowToast("Sale " + Row.Receipt + " refunded — stock restored, money returned");
-            _ = _shell.Sales.LoadAsync();
+            _ = _shell.Sell.LoadListAsync();
         }
         catch (ApiException ex)
         {

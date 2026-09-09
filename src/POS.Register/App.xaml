@@ -3,14 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:auth="clr-namespace:POS.Register.Features.Auth.Screens"
              xmlns:sell="clr-namespace:POS.Register.Features.Sell.Screens"
-             xmlns:sales="clr-namespace:POS.Register.Features.Sales.Screens"
              xmlns:shifts="clr-namespace:POS.Register.Features.Shifts.Screens"
              xmlns:comp="clr-namespace:POS.Register.Components"
              xmlns:sellcomp="clr-namespace:POS.Register.Features.Sell.Components"
-             xmlns:salescomp="clr-namespace:POS.Register.Features.Sales.Components"
              xmlns:shiftcomp="clr-namespace:POS.Register.Features.Shifts.Components"
-             xmlns:utang="clr-namespace:POS.Register.Features.Utang.Screens"
-             xmlns:utangcomp="clr-namespace:POS.Register.Features.Utang.Components"
+             xmlns:invoices="clr-namespace:POS.Register.Features.Invoices.Screens"
+             xmlns:invoicecomp="clr-namespace:POS.Register.Features.Invoices.Components"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
@@ -26,14 +24,11 @@
             <DataTemplate DataType="{x:Type sell:SellScreenViewModel}">
                 <sell:SellScreenView />
             </DataTemplate>
-            <DataTemplate DataType="{x:Type sales:SalesScreenViewModel}">
-                <sales:SalesScreenView />
+            <DataTemplate DataType="{x:Type invoices:InvoiceScreenViewModel}">
+                <invoices:InvoiceScreenView />
             </DataTemplate>
             <DataTemplate DataType="{x:Type shifts:ShiftScreenViewModel}">
                 <shifts:ShiftScreenView />
-            </DataTemplate>
-            <DataTemplate DataType="{x:Type utang:UtangScreenViewModel}">
-                <utang:UtangScreenView />
             </DataTemplate>
 
             <DataTemplate DataType="{x:Type comp:PaymentModalViewModel}">
@@ -48,23 +43,20 @@
             <DataTemplate DataType="{x:Type comp:AdminOverrideModalViewModel}">
                 <comp:AdminOverrideModalView />
             </DataTemplate>
-            <DataTemplate DataType="{x:Type sellcomp:DiscountModalViewModel}">
-                <sellcomp:DiscountModalView />
+            <DataTemplate DataType="{x:Type comp:DiscountModalViewModel}">
+                <comp:DiscountModalView />
             </DataTemplate>
-            <DataTemplate DataType="{x:Type sellcomp:EWalletModalViewModel}">
-                <sellcomp:EWalletModalView />
+            <DataTemplate DataType="{x:Type comp:QtyModalViewModel}">
+                <comp:QtyModalView />
             </DataTemplate>
-            <DataTemplate DataType="{x:Type sellcomp:QtyModalViewModel}">
-                <sellcomp:QtyModalView />
+            <DataTemplate DataType="{x:Type sellcomp:DetailModalViewModel}">
+                <sellcomp:DetailModalView />
             </DataTemplate>
-            <DataTemplate DataType="{x:Type salescomp:DetailModalViewModel}">
-                <salescomp:DetailModalView />
+            <DataTemplate DataType="{x:Type invoicecomp:InvoiceDetailModalViewModel}">
+                <invoicecomp:InvoiceDetailModalView />
             </DataTemplate>
-            <DataTemplate DataType="{x:Type utangcomp:CollectModalViewModel}">
-                <utangcomp:CollectModalView />
-            </DataTemplate>
-            <DataTemplate DataType="{x:Type utangcomp:EditPaymentModalViewModel}">
-                <utangcomp:EditPaymentModalView />
+            <DataTemplate DataType="{x:Type invoicecomp:ChargeModalViewModel}">
+                <invoicecomp:ChargeModalView />
             </DataTemplate>
             <DataTemplate DataType="{x:Type shiftcomp:MovementModalViewModel}">
                 <shiftcomp:MovementModalView />

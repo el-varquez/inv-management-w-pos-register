@@ -2,9 +2,10 @@ using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using POS.Register.Lib;
+using POS.Register.Store;
 using AppShell = POS.Register.Shell;
 
-namespace POS.Register.Features.Sell.Components;
+namespace POS.Register.Components;
 
 public partial class QtyModalViewModel : ObservableObject, AppShell.IDefaultAction
 {
@@ -12,6 +13,7 @@ public partial class QtyModalViewModel : ObservableObject, AppShell.IDefaultActi
     public ICommand DismissCommand => CancelCommand;
 
     private readonly AppShell.ShellViewModel _shell;
+    private readonly CartStore _cart;
 
     public CartLine Line { get; }
 
@@ -19,9 +21,10 @@ public partial class QtyModalViewModel : ObservableObject, AppShell.IDefaultActi
     [NotifyCanExecuteChangedFor(nameof(ConfirmCommand))]
     private string qtyText;
 
-    public QtyModalViewModel(AppShell.ShellViewModel shell, CartLine line)
+    public QtyModalViewModel(AppShell.ShellViewModel shell, CartStore cart, CartLine line)
     {
         _shell = shell;
+        _cart = cart;
         Line = line;
         qtyText = line.Qty.ToString();
     }
@@ -48,7 +51,7 @@ public partial class QtyModalViewModel : ObservableObject, AppShell.IDefaultActi
     [RelayCommand(CanExecute = nameof(CanConfirm))]
     private void Confirm()
     {
-        if (!_shell.Cart.TrySetQty(Line, ParsedQty))
+        if (!_cart.TrySetQty(Line, ParsedQty))
         {
             _shell.ShowToast($"Only {Line.Cap} available");
             return;

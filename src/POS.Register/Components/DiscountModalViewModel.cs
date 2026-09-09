@@ -2,9 +2,10 @@ using System.Globalization;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using POS.Register.Store;
 using AppShell = POS.Register.Shell;
 
-namespace POS.Register.Features.Sell.Components;
+namespace POS.Register.Components;
 
 public partial class DiscountModalViewModel : ObservableObject, AppShell.IDefaultAction
 {
@@ -12,11 +13,16 @@ public partial class DiscountModalViewModel : ObservableObject, AppShell.IDefaul
     public ICommand DismissCommand => CancelCommand;
 
     private readonly AppShell.ShellViewModel _shell;
+    private readonly CartStore _cart;
 
     [ObservableProperty]
     private string amountText = "";
 
-    public DiscountModalViewModel(AppShell.ShellViewModel shell) => _shell = shell;
+    public DiscountModalViewModel(AppShell.ShellViewModel shell, CartStore cart)
+    {
+        _shell = shell;
+        _cart = cart;
+    }
 
     partial void OnAmountTextChanged(string value)
     {
@@ -36,7 +42,7 @@ public partial class DiscountModalViewModel : ObservableObject, AppShell.IDefaul
     [RelayCommand]
     private void Confirm()
     {
-        _shell.Cart.RequestedDiscount =
+        _cart.RequestedDiscount =
             decimal.TryParse(AmountText, NumberStyles.Number, CultureInfo.InvariantCulture, out var v) ? v : 0m;
         _shell.CloseModal();
         _shell.FocusScan();

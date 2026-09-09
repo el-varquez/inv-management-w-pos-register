@@ -1,6 +1,6 @@
 using POS.Register.Types;
 
-namespace POS.Register.Features.Sales.Screens;
+namespace POS.Register.Features.Sell.Screens;
 
 public record SaleRow(
     Guid Id,
@@ -9,26 +9,19 @@ public record SaleRow(
     int Items,
     string Payment,
     decimal Amount,
-    bool Refunded,
-    bool IsInvoice)
+    bool Refunded)
 {
     public string Status => Refunded ? "Refunded" : "Completed";
 
-    public static SaleRow From(SaleDto sale, Func<Guid?, string?> sukiNameOf)
-    {
-        var isInvoice = sale.MethodType == "Invoice";
-        return new(
+    public static SaleRow From(SaleDto sale)
+        => new(
             sale.Id,
             sale.ReceiptNumber,
             sale.CreatedAt.ToLocalTime().ToString("h:mm tt"),
             sale.ItemCount,
-            isInvoice
-                ? $"{sale.PaymentMethod} · {sukiNameOf(sale.SukiId) ?? ""}"
-                : sale.PaymentMethod,
+            sale.PaymentMethod,
             sale.Total,
-            sale.IsRefunded,
-            isInvoice);
-    }
+            sale.IsRefunded);
 }
 
 public record SaleLine(string Name, int Qty, decimal Total)

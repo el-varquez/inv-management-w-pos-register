@@ -152,6 +152,43 @@
         <Setter Property="Background" Value="{StaticResource GoldSoft}" />
     </Style>
 
+    <Style x:Key="SegBar" TargetType="Border">
+        <Setter Property="Background" Value="{StaticResource Paper2}" />
+        <Setter Property="BorderBrush" Value="{StaticResource Line}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="{StaticResource RadiusControl}" />
+        <Setter Property="Padding" Value="4" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+    </Style>
+
+    <Style x:Key="SegTabBase" TargetType="Button" BasedOn="{StaticResource BtnBase}">
+        <Setter Property="MinHeight" Value="36" />
+        <Setter Property="Padding" Value="20,0" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{StaticResource Ink2}" />
+    </Style>
+
+    <Style x:Key="SegTabRing" TargetType="Button" BasedOn="{StaticResource SegTabBase}">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding ShowingRing}" Value="True">
+                <Setter Property="Background" Value="{StaticResource Surface}" />
+                <Setter Property="Foreground" Value="{StaticResource GreenDeep}" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="SegTabList" TargetType="Button" BasedOn="{StaticResource SegTabBase}">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding ShowingList}" Value="True">
+                <Setter Property="Background" Value="{StaticResource Surface}" />
+                <Setter Property="Foreground" Value="{StaticResource GreenDeep}" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
     <Style x:Key="Card" TargetType="Border">
         <Setter Property="Background" Value="{StaticResource Surface}" />
         <Setter Property="BorderBrush" Value="{StaticResource Line}" />

@@ -1,7 +1,7 @@
 using POS.Register.Services;
 using POS.Register.Types;
 
-namespace POS.Register.Features.Sales.Services;
+namespace POS.Register.Features.Sell.Services;
 
 public class SalesService
 {

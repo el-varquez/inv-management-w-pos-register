@@ -1,6 +1,6 @@
 using POS.Register.Types;
 
-namespace POS.Register.Features.Sell.Screens;
+namespace POS.Register.Lib;
 
 public record ResultRow(
     SellableItemDto Item,

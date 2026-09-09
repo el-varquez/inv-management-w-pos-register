@@ -1,6 +1,6 @@
 using System.Windows.Controls;
 
-namespace POS.Register.Features.Sell.Components;
+namespace POS.Register.Components;
 
 public partial class QtyModalView : UserControl
 {

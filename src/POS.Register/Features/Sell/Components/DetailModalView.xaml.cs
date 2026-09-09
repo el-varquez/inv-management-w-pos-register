@@ -1,6 +1,6 @@
 using System.Windows.Controls;
 
-namespace POS.Register.Features.Sales.Components;
+namespace POS.Register.Features.Sell.Components;
 
 public partial class DetailModalView : UserControl
 {

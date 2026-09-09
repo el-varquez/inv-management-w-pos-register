@@ -52,13 +52,10 @@
                 <RadioButton Style="{StaticResource RailItem}" Tag="&#x1F6D2;" Content="SELL"
                              IsChecked="{Binding ActiveScreenName, Mode=OneWay, Converter={StaticResource ActiveNav}, ConverterParameter=Sell}"
                              Command="{Binding NavigateCommand}" CommandParameter="Sell" HorizontalAlignment="Center" />
-                <RadioButton Style="{StaticResource RailItem}" Tag="&#x1F9FE;" Content="SALES"
-                             IsChecked="{Binding ActiveScreenName, Mode=OneWay, Converter={StaticResource ActiveNav}, ConverterParameter=Sales}"
-                             Command="{Binding NavigateCommand}" CommandParameter="Sales" HorizontalAlignment="Center" />
-                <RadioButton Style="{StaticResource RailItem}" Tag="&#x1F4D2;" Content="UTANG"
-                             IsChecked="{Binding ActiveScreenName, Mode=OneWay, Converter={StaticResource ActiveNav}, ConverterParameter=Utang}"
-                             Command="{Binding NavigateCommand}" CommandParameter="Utang" HorizontalAlignment="Center"
-                             Visibility="{Binding ShowUtangRail, Converter={StaticResource BoolToVis}}" />
+                <RadioButton Style="{StaticResource RailItem}" Tag="&#x1F4D2;" Content="INVOICE"
+                             IsChecked="{Binding ActiveScreenName, Mode=OneWay, Converter={StaticResource ActiveNav}, ConverterParameter=Invoices}"
+                             Command="{Binding NavigateCommand}" CommandParameter="Invoices" HorizontalAlignment="Center"
+                             Visibility="{Binding ShowInvoiceRail, Converter={StaticResource BoolToVis}}" />
                 <RadioButton Style="{StaticResource RailItem}" Tag="&#x1F4B5;" Content="SHIFT"
                              IsChecked="{Binding ActiveScreenName, Mode=OneWay, Converter={StaticResource ActiveNav}, ConverterParameter=Shift}"
                              Command="{Binding NavigateCommand}" CommandParameter="Shift" HorizontalAlignment="Center" />
