@@ -9,7 +9,7 @@ public record ReceiptRow(string Label, string Value = "", bool IsHead = false, s
 
 public static class CannedDay
 {
-    public const string StoreName = "Aling Nena's Store";
+    public const string StoreName = "Toyang's Store";
 
     public const string LockedTitle = "No starting cash declared";
 
